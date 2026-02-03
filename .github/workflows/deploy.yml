@@ -87,7 +87,13 @@ jobs:
         run: |
           docker run --rm \
             app:test \
-            vendor/bin/phpstan analyze src/ --level=5 --no-progress || true
+            ./vendor/bin/phpstan analyze src/ --level=5 --no-progress || true
+
+      - name: PHP CS Fixer Check
+        run: |
+          docker run --rm \
+            app:test \
+            ./vendor/bin/php-cs-fixer fix --dry-run --diff src/ || true
 
       - name: Run PHPUnit Tests
         run: |
@@ -98,7 +104,7 @@ jobs:
             -e REDIS_URL="redis://127.0.0.1:6379" \
             -e MESSENGER_TRANSPORT_DSN="redis://127.0.0.1:6379/messages" \
             app:test \
-            php bin/phpunit --configuration phpunit.xml || true
+            ./vendor/bin/phpunit --configuration phpunit.xml --fail-fast || true
 
       - name: Log in to Container Registry
         if: success()
@@ -139,5 +145,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Security Check: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "### PHPStan: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "### PHP CS Fixer: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "### PHPUnit: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
           echo "### Build & Push: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
