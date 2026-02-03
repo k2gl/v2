@@ -1,0 +1,67 @@
+{
+  "dashboard": {
+    "title": "FrankenPHP + Symfony Overview",
+    "uid": "frankenphp-overview",
+    "tags": ["frankenphp", "symfony", "php8.5"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "PHP Memory Usage",
+        "type": "graph",
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "php_memory_usage_bytes",
+            "legendFormat": "Memory Usage",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "Request Duration",
+        "type": "graph",
+        "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "rate(http_request_duration_seconds_bucket[5m])",
+            "legendFormat": "Request Duration",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "HTTP Requests Rate",
+        "type": "graph",
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+        "targets": [
+          {
+            "expr": "rate(php_requests_total[5m])",
+            "legendFormat": "Requests/sec",
+            "refId": "A"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Health Check Status",
+        "type": "stat",
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 4 },
+        "targets": [
+          {
+            "expr": "up{job='frankenphp'}",
+            "legendFormat": "Status",
+            "refId": "A"
+          }
+        ]
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "30s"
+  }
+}

@@ -1,0 +1,15 @@
+sentry:
+    dsn: '%env(SENTRY_DSN)%'
+    options:
+        send_default_pii: true
+        flush_at_shutdown: true
+        with_locale: true
+        register_error_handler: true
+        register_error_listener: true
+        traces_sample_rate: 0.1
+        release: '%env(APP_VERSION)%'
+        environment: '%env(APP_ENV)%'
+        ignore_exceptions:
+            - 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException'
+        attach_stacktrace: true
+        max_request_body_size: 'always'

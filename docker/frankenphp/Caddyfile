@@ -1,0 +1,70 @@
+# FrankenPHP Caddyfile with Mercure Real-time
+# Optimized for Vertical Slice Architecture + Worker Mode
+
+{
+    # Enable HTTP/3 support
+    frankenphp
+
+    # Disable admin interface for production security
+    admin off
+
+    # Structured JSON logging
+    log {
+        level INFO
+        format json
+    }
+}
+
+# Domain configuration (use :80 for local development)
+:80 {
+    # Set document root
+    root * public/
+
+    # Enable modern compression (Zstd + Gzip)
+    encode zstd gzip
+
+    # Redirect /docs to /docs/ for proper relative paths
+    redir /docs /docs/ 301
+
+    # CORS Headers (Pragmatic approach)
+    header {
+        Access-Control-Allow-Origin *
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+        Access-Control-Max-Age "3600"
+    }
+
+    # Instant response for preflight (OPTIONS) requests
+    @options { method OPTIONS }
+    respond @options 204
+
+    # Security headers
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy no-referrer-when-downgrade
+    }
+
+    # Mercure Hub Configuration
+    # Built-in real-time updates for Kanban
+    mercure {
+        publisher_jwt {$MERCURE_PUBLISHER_JWT_KEY}
+        subscriber_jwt {$MERCURE_SUBSCRIBER_JWT_KEY}
+        anonymous  # Allow anonymous subscribers for development
+        cors {
+            allowed_origins *
+        }
+    }
+
+    # Static file serving (openapi.yaml, Swagger UI)
+    # PHP never invoked for static files
+    file_server {
+        pass_through
+    }
+
+    # PHP processing via Worker Mode
+    # All non-static requests go to Symfony (already in memory)
+    php_server {
+        index index.php
+    }
+}

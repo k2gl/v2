@@ -1,0 +1,93 @@
+services:
+  app:
+    build:
+      context: .
+      target: php_dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+      - "9003:9003"
+    volumes:
+      - ./:/app:cached
+      - caddy_data:/data
+      - caddy_config:/config
+    environment:
+      SERVER_NAME: "localhost"
+      APP_SECRET: "${APP_SECRET:-change-me-in-production}"
+      DATABASE_URL: "postgres://user:password@db:5432/app_db?serverVersion=16&charset=utf8"
+      REDIS_URL: "redis://redis:6379"
+      MESSENGER_TRANSPORT_DSN: "redis://redis:6379/messages"
+      PHP_INI_SCAN_DIR: ":/usr/local/etc/php/conf.d"
+      XDEBUG_MODE: "${XDEBUG_MODE:-off}"
+      XDEBUG_CLIENT_HOST: "host.docker.internal"
+      XDEBUG_START_WITH_REQUEST: "yes"
+      FRANKENPHP_CONFIG: "worker ./public/index.php"
+      CADDY_GLOBAL_OPTIONS: |
+        metrics
+      SCHEDULER_ENABLED: "${SCHEDULER_ENABLED:-false}"
+      FRANKENPHP_MAX_JOBS: "${FRANKENPHP_MAX_JOBS:-8}"
+      PHP_MAX_REQUESTS: "${PHP_MAX_REQUESTS:-500}"
+      PHP_MEMORY_LIMIT: "${PHP_MEMORY_LIMIT:-128M}"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    tty: true
+    networks:
+      - app-network
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: app_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d app_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+volumes:
+  caddy_data:
+  caddy_config:
+  db_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge

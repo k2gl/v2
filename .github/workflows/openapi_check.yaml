@@ -1,0 +1,74 @@
+name: "OpenAPI Specification Check"
+
+on:
+  pull_request:
+    branches: ["main", "develop"]
+  push:
+    branches: ["main"]
+
+jobs:
+  openapi_lint:
+    name: Validate and Check Drift
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: symfony
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_pgsql
+          coverage: none
+
+      - name: Install Dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Generate OpenAPI Schema
+        run: |
+          php bin/console nelmio:apidoc:dump --format=yaml > openapi_temp.yaml
+
+      - name: Check for OpenAPI Drift
+        run: |
+          diff public/openapi.yaml openapi_temp.yaml
+        continue-on-error: false
+
+      - name: Lint OpenAPI File
+        uses: charliemclaughlin/openapi-validator-action@v2
+        with:
+          openapi-relative-path: public/openapi.yaml
+
+  security-audit:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Install Dependencies
+        run: composer install --no-interaction --no-progress
+
+      - name: Security Check
+        run: |
+          composer audit --format=summary
+        continue-on-error: false

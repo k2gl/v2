@@ -1,0 +1,9 @@
+api_tasks:
+    path: /api/tasks
+    controller: App\Task\Features\CreateTask\CreateTaskAction
+    methods: [POST]
+
+api_boards_id:
+    path: /api/boards/{id}
+    controller: App\Board\Features\GetBoard\GetBoardAction
+    methods: [GET]

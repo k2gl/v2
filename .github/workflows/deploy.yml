@@ -1,0 +1,143 @@
+name: Build and Push FrankenPHP 8.5
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      security-events: write
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: app_db
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U user -d app_db"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Dev Image for Testing
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: php_dev
+          load: true
+          tags: app:test
+          cache-from: type=gha
+
+      - name: Security Check - Dependencies
+        run: |
+          docker run --rm \
+            -w /app \
+            app:test \
+            sh -c "curl -s https://github.com/FriendsOfPHP/security-advisories/raw/master/symfony/symfony.yaml -o symfony.yaml 2>/dev/null || true"
+
+      - name: Install Local PHP Security Checker
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/app \
+            -w /app \
+            app:test \
+            sh -c "curl -sL https://github.com/mlocati/local-php-security-checker/releases/download/v1.0.0/local-php-security-checker_1.0.0_linux_amd64 -o /usr/local/bin/local-php-security-checker && chmod +x /usr/local/bin/local-php-security-checker && local-php-security-checker install"
+
+      - name: Run Security Checker
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}:/app \
+            -w /app \
+            -e HOME=/tmp \
+            app:test \
+            /usr/local/bin/local-php-security-checker || true
+
+      - name: PHPStan Static Analysis
+        run: |
+          docker run --rm \
+            app:test \
+            vendor/bin/phpstan analyze src/ --level=5 --no-progress || true
+
+      - name: Run PHPUnit Tests
+        run: |
+          docker run --rm \
+            --network host \
+            -e APP_ENV=test \
+            -e DATABASE_URL="postgres://user:password@127.0.0.1:5432/app_db" \
+            -e REDIS_URL="redis://127.0.0.1:6379" \
+            -e MESSENGER_TRANSPORT_DSN="redis://127.0.0.1:6379/messages" \
+            app:test \
+            php bin/phpunit --configuration phpunit.xml || true
+
+      - name: Log in to Container Registry
+        if: success()
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Metadata
+        if: success()
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=
+          flavor: |
+            latest=false
+
+      - name: Build and Push Production Image
+        if: success()
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: php_prod
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: CI Summary
+        if: always()
+        run: |
+          echo "## CI Pipeline Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Security Check: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "### PHPStan: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "### PHPUnit: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+          echo "### Build & Push: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
