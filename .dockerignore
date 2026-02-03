@@ -1,0 +1,59 @@
+# =============================================================================
+# Docker Ignore for Symfony / FrankenPHP Projects
+# =============================================================================
+
+# Dependencies (installed during build)
+/vendor
+/composer.lock
+/node_modules
+
+# Git
+/.git
+/.gitignore
+
+# IDE
+/.idea
+/.vscode
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+*~
+
+# Logs
+*.log
+/var/log/*
+/var/cache/*
+/var/sessions/*
+
+# Environment
+/.env
+/.env.local
+/.env.*.local
+
+# Testing
+/.phpunit
+.phpunit.result.cache
+/coverage
+
+# Documentation
+*.md
+!README.md
+/docs
+
+# CI/CD
+/.github
+
+# Temporary
+*.tmp
+*.bak
+*.orig
+*.rej
+
+# Docker
+docker-compose.override.yml
+
+# OpenAPI Generated
+/public/openapi.yaml
