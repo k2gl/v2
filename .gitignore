@@ -55,4 +55,4 @@ docker/dev/nginx/*.conf
 *.rej
 
 # AI Agents
-agents.local.md
+AGENTS.local.md

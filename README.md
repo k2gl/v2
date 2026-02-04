@@ -29,29 +29,23 @@ Pragmatic Franken is a no-compromise skeleton template for building high-perform
 
 Project will be available at: https://localhost (or http://localhost).
 
-## 🤖 AI-First Development
+## 🤖 AI Agent Integration
 
-This repository is optimized for **Vibe Coding** with AI agents (Cursor, Windsurf, GitHub Copilot).
+This project is optimized for AI assistants (Cursor, Windsurf, GitHub Copilot).
 
-### Ready for Vibe Coding
+### Local Environment Setup
 
-The root `AGENTS.md` file provides pre-defined context and rules for AI agents to maintain Pragmatic DDD structure automatically.
+For the agent to know paths to your local tools (Git CLI, Python, etc.) and follow your personal preferences:
 
-Simply point your AI agent to `AGENTS.md`, and it will:
-- Follow Pragmatic DDD patterns consistently
-- Use the correct Command/Query/Event Bus implementations
-- Respect Modular Monolith boundaries
-- Apply PHP 8.5 features correctly
+1. Navigate to `.config/agents/` directory.
+2. Copy `agents.local.md.example` as `agents.local.md`.
+3. Make your edits (this file is in `.gitignore` and won't be committed).
 
-### 🚀 AI-Driven Workflow
+### Configuration Structure
 
-This repo is optimized for Vibe Coding. The root contains an `AGENTS.md` file designed for Cursor / Windsurf / Copilot Custom Instructions.
-
-Simply point your AI agent to this file, and it will:
-- Follow Pragmatic DDD patterns consistently
-- Use the correct Command/Query/Event Bus implementations
-- Respect the Modular Monolith boundaries
-- Apply PHP 8.5 features (property promotion, typed constants, etc.) correctly
+- `AGENTS.md` (root) — entry point for AI.
+- `.config/agents/agents.md` — project rules and code standards.
+- `.config/agents/agents.local.md` — your personal settings and tool paths.
 
 ## 📁 Project Structure
 
