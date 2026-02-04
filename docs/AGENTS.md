@@ -8,7 +8,7 @@
 
 ## 🎯 Your Role
 
-You are the lead architect and developer of the **Kanban Pragmatic Architecture** project. Your task is to write code strictly according to **Pragmatic Vertical Slice Architecture**.
+You are the lead architect and developer of the **Pragmatic Franken** project. Your task is to write code strictly according to **Pragmatic Vertical Slice Architecture**.
 
 You must follow these rules for ALL code changes, documentation, or refactoring.
 
@@ -113,6 +113,25 @@ readonly class ReorderTasksHandler
 
 ---
 
+## 📝 Documentation Language Rules
+
+**ALL documentation MUST be in English only:**
+- README files
+- docs/*.md files
+- Code comments
+- Commit messages
+- Pull request descriptions
+- Issue descriptions
+
+**Why English:**
+- Unified codebase language
+- International team compatibility
+- Consistent tooling support (AI, linters, translators)
+
+**Exception:** User-facing text (translations, UI strings) can be localized.
+
+---
+
 ## 📝 Code Rules
 
 ### 1. DTO and Attributes
@@ -208,8 +227,8 @@ readonly class CreateTaskHandler
         
         if ($this->hub !== null) {
             $update = new Update(
-                "https://your-kanban.com/board/{$boardId}",
-                json_encode(['event' => 'task_created', 'task' => [...]])
+                "https://your-app.com/api/{$resourceId}",
+                json_encode(['event' => 'entity_created', 'data' => [...]])
             );
             $this->hub->publish($update);
         }
@@ -225,13 +244,13 @@ readonly class CreateTaskHandler
 
 ### Fractional Indexing (DECIMAL for Drag&Drop)
 ```sql
-CREATE TABLE tasks (
+CREATE TABLE items (
     id SERIAL PRIMARY KEY,
     position DECIMAL(20, 10) NOT NULL DEFAULT 0,
-    column_id INTEGER NOT NULL REFERENCES board_columns(id)
+    list_id INTEGER NOT NULL REFERENCES lists(id)
 );
 
-CREATE INDEX idx_tasks_position ON tasks(column_id, position);
+CREATE INDEX idx_items_position ON items(list_id, position);
 ```
 
 ### JSONB for Metadata
@@ -268,11 +287,11 @@ docker compose exec frankenphp php bin/console doctrine:migrations:migrate
 ### Production Build
 ```bash
 # Build production image
-docker build -t kanban-app:latest .
+docker build -t frankenphp-app:latest .
 
 # Multi-stage build targets
-docker build --target php_dev -t kanban-app:dev .
-docker build --target php_prod -t kanban-app:prod .
+docker build --target php_dev -t frankenphp-app:dev .
+docker build --target php_prod -t frankenphp-app:prod .
 ```
 
 ---
@@ -333,11 +352,11 @@ gh run list
 ### Docker Build
 ```bash
 # Production
-docker build -t kanban-app:latest .
+docker build -t frankenphp-app:latest .
 
 # Multi-stage build targets
-docker build --target php_dev -t kanban-app:dev .
-docker build --target php_prod -t kanban-app:prod .
+docker build --target php_dev -t frankenphp-app:dev .
+docker build --target php_prod -t frankenphp-app:prod .
 ```
 
 ### Zero-Downtime Deploy
@@ -375,11 +394,7 @@ docker compose up -d --no-deps php
 │   ├── Board/Features/          # Vertical Slices
 │   └── User/                   # Authentication
 ├── public/
-│   ├── js/                     # Vue.js frontend
-│   │   ├── components/
-│   │   ├── stores/             # Pinia stores
-│   │   └── kanban-realtime.js   # Mercure SSE
-│   └── index.php
+│   ├── index.php
 ├── docker/
 │   ├── php/                    # PHP configs (xdebug, optimizations)
 │   ├── prometheus/             # Monitoring

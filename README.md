@@ -1,6 +1,6 @@
-# 🚀 Symfony + FrankenPHP 8.5 Enterprise Stack
+# Pragmatic Franken
 
-Modern stack for high-performance Symfony applications, packaged in Docker with maximum security and monitoring.
+Pragmatic Franken is a no-compromise skeleton template for building high-performance PHP applications. The project combines the flexibility of Symfony with the power of FrankenPHP, packaging everything into a perfectly configured Docker infrastructure.
 
 ## 🛠 Technologies
 - **PHP 8.5 (Alpine)**: Latest features (Pipe operator, URI extension).

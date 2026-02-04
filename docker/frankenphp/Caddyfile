@@ -1,70 +1,32 @@
-# FrankenPHP Caddyfile with Mercure Real-time
-# Optimized for Vertical Slice Architecture + Worker Mode
-
 {
-    # Enable HTTP/3 support
-    frankenphp
+	frankenphp {
+		num_threads 8
+	}
 
-    # Disable admin interface for production security
-    admin off
-
-    # Structured JSON logging
-    log {
-        level INFO
-        format json
-    }
+	admin off
 }
 
-# Domain configuration (use :80 for local development)
 :80 {
-    # Set document root
-    root * public/
+	log {
+		format json
+		level INFO
+	}
 
-    # Enable modern compression (Zstd + Gzip)
-    encode zstd gzip
+	root * public/
+	encode zstd gzip
 
-    # Redirect /docs to /docs/ for proper relative paths
-    redir /docs /docs/ 301
+	handle_path /assets/* {
+		header Cache-Control "public, max-age=31536000"
+		file_server
+	}
 
-    # CORS Headers (Pragmatic approach)
-    header {
-        Access-Control-Allow-Origin *
-        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
-        Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
-        Access-Control-Max-Age "3600"
-    }
+	php_server {
+		worker index.php
+	}
 
-    # Instant response for preflight (OPTIONS) requests
-    @options { method OPTIONS }
-    respond @options 204
+	exec php bin/console messenger:consume scheduler_default --memory-limit=128M -vv
+}
 
-    # Security headers
-    header {
-        X-Content-Type-Options nosniff
-        X-Frame-Options DENY
-        Referrer-Policy no-referrer-when-downgrade
-    }
-
-    # Mercure Hub Configuration
-    # Built-in real-time updates for Kanban
-    mercure {
-        publisher_jwt {$MERCURE_PUBLISHER_JWT_KEY}
-        subscriber_jwt {$MERCURE_SUBSCRIBER_JWT_KEY}
-        anonymous  # Allow anonymous subscribers for development
-        cors {
-            allowed_origins *
-        }
-    }
-
-    # Static file serving (openapi.yaml, Swagger UI)
-    # PHP never invoked for static files
-    file_server {
-        pass_through
-    }
-
-    # PHP processing via Worker Mode
-    # All non-static requests go to Symfony (already in memory)
-    php_server {
-        index index.php
-    }
+:2019 {
+	metrics
 }

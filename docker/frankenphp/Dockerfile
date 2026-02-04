@@ -88,7 +88,7 @@ COPY ./docker/php/prod-optimizations.ini $PHP_INI_DIR/conf.d/
 
 RUN chmod -R 755 config/
 
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint
+COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN chmod +x /usr/local/bin/docker-entrypoint
 
 ENTRYPOINT ["docker-entrypoint"]
