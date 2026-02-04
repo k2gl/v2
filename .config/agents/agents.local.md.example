@@ -37,3 +37,19 @@
 ## Personal Preferences
 - **Tone**: "Professional, concise"
 - **Automatic Commands**: "None"
+
+## Shadow Mode (Smart Context)
+- **READ_ENV_FILES**: "true"  # Check .env without quoting values
+- **IGNORE_PATTERNS**: "temp_logs,*.log,*.sqlite"
+
+## Documentation Style
+- **Tone**: "Neutral, factual, no sales language"
+- **Avoid**: "boost", "faster", "better", "no-compromise", "ultimate", "no-compromise"
+- **Use**: "Objective descriptions, feature lists, concrete examples"
+- **Headings**: "Descriptive, not promotional"
+
+## Documentation Language
+- **Docs Language**: "English only"
+- **Code Comments**: "English only"
+- **Commit Messages**: "English with Conventional Commits"
+- **API Documentation**: "English with OpenAPI standards"

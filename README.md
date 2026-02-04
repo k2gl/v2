@@ -6,15 +6,13 @@
 [![License MIT](https://img.shields.io/badge/License-MIT-yellowgreen)](https://opensource.org/licenses/MIT)
 [![CI Pipeline](https://img.shields.io/github/actions/workflow/status/k2gl/pragmatic-franken/conventional-commits.yml?branch=main&label=CI)](https://github.com/k2gl/pragmatic-franken/actions)
 
-> A no-compromise skeleton template for building high-performance PHP applications. Combines the flexibility of Symfony with the power of FrankenPHP in a perfectly configured Docker infrastructure.
+> Symfony project with FrankenPHP, DDD patterns, and Docker infrastructure.
 
-## 🎯 Why This Template?
+## 🎯 Key Features
 
-| For CTOs | For Tech Leads | For Developers |
-|----------|---------------|-----------------|
-| 2-3x performance boost over PHP-FPM | Architecture enforcement via DDD patterns | Instant onboarding with `make up` |
-| 30-50% faster perceived load with 103 Early Hints | AI-ready codebase with AGENTS.md | Clear patterns (Command/Query/Event) |
-| Reduced infrastructure costs | Modular monolith ready for microservices | Pre-configured Docker + Xdebug |
+- **Modular Architecture** — DDD patterns with clear module boundaries
+- **AI-Ready** — AGENTS.md for AI assistant configuration
+- **Developer Experience** — `make up` for quick start
 
 ## 🛠 Technologies
 
@@ -24,31 +22,14 @@
 - **Redis 7**: Cache, sessions, and Messenger.
 - **Caddy**: Automatic HTTPS and HTTP/3.
 
-## 📊 Performance Comparison
+## 📊 FrankenPHP Features
 
-| Metric | Traditional PHP-FPM | **This Template (FrankenPHP)** |
-|--------|---------------------|------------------------------|
-| Requests/sec | ~500 | **~1,500** |
-| Memory usage | ~256MB | **~128MB** |
-| Cold start | 500ms | **50ms** |
-| Worker Mode | Separate process | **Native** |
-| 103 Early Hints | Not supported | **Supported** (30-50% faster perceived load) |
-| Separate services needed | PHP-FPM + Caddy + Supervisor | **Single binary** |
+- Worker Mode for long-running processes without separate queues
+- 103 Early Hints for resource preloading
+- Built-in Mercure for real-time updates
+- Prometheus metrics on port 2019
 
-See [Why FrankenPHP?](docs/why-frankenphp.md) for detailed benchmarks.
-
-## ⚖️ Template Comparison
-
-| Feature | This Template | Traditional Symfony | Laravel Vanilla |
-|---------|---------------|---------------------|----------------|
-| **FrankenPHP Worker Mode** | ✅ Native | ❌ Separate process | ❌ RoadRunner |
-| **103 Early Hints** | ✅ Supported | ❌ | ❌ |
-| **AI-Ready (AGENTS.md)** | ✅ Configured | ⚠️ Manual | ⚠️ Manual |
-| **Modular DDD** | ✅ Vertical Slices | ⚠️ Manual | ❌ |
-| **Multi-stage Docker** | ✅ Optimized | ⚠️ Basic | ⚠️ Basic |
-| **Outbox Pattern** | ✅ Built-in | ⚠️ Manual | ❌ |
-| **Messenger Workers** | ✅ In Caddyfile | ❌ Supervisor needed | ❌ RoadRunner |
-| **Mercure Native** | ✅ Integrated | ⚠️ Manual | ⚠️ Manual |
+See [Why FrankenPHP?](docs/why-frankenphp.md) for details.
 
 ## 🚀 Quick Start
 

@@ -12,6 +12,9 @@ updates:
       - "composer"
     commit-message:
       prefix: "chore(deps)"
+    automerge: true
+    automerge-method: squash
+    target-branch: "main"
 
   # GitHub Actions
   - package-ecosystem: "github-actions"
@@ -24,6 +27,9 @@ updates:
       - "github-actions"
     commit-message:
       prefix: "chore(ci)"
+    automerge: true
+    automerge-method: squash
+    target-branch: "main"
 
   # Docker
   - package-ecosystem: "docker"
@@ -36,3 +42,6 @@ updates:
       - "docker"
     commit-message:
       prefix: "chore(docker)"
+    automerge: true
+    automerge-method: squash
+    target-branch: "main"
