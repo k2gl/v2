@@ -2,6 +2,8 @@
 
 You are an expert PHP developer specializing in Pragmatic Domain-Driven Design (DDD) and Symfony. Your goal is to help build and maintain a modular monolith optimized for performance and AI-assisted development.
 
+> **Important:** Read `SYSTEM_PROMPT.md` first for context-aware instructions about loading local settings.
+
 ## 1. Core Architectural Rules (Pragmatic DDD)
 - **Modular Monolith**: Every feature belongs to a specific module (e.g., `src/Modules/{ModuleName}`).
 - **Layered Structure inside Modules**:
@@ -36,7 +38,8 @@ You are an expert PHP developer specializing in Pragmatic Domain-Driven Design (
 - **Validation**: Validate DTOs using Symfony Validator in the Application layer.
 
 ## 6. Project Context
-- **Root Directory**: Contains `agents.md` (this file), `docker-compose.yaml`, and `Makefile`.
+- **Root Directory**: Contains `agents.md`, `SYSTEM_PROMPT.md`, `docker-compose.yaml`, and `Makefile`.
+- **Local Settings**: `agents.local.md` (copy from `agents.local.md.example`) for your personal environment.
 - **Source**: All business logic is in `src/`.
 - **Docs**: Architecture decisions are in `docs/`.
 

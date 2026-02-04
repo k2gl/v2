@@ -53,3 +53,6 @@ docker/dev/nginx/*.conf
 *.bak
 *.orig
 *.rej
+
+# AI Agents
+agents.local.md
