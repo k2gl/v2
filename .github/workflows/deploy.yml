@@ -69,9 +69,7 @@ jobs:
           target: php_dev
           load: true
           tags: app:test
-          cache-from: type=gha,mode=max
-          cache-to: type=gha,mode=max
-          no-cache-push: true
+          no-cache: true
 
       # 3. Аудит PHP-зависимостей (встроенный в Composer)
       - name: Composer Audit
