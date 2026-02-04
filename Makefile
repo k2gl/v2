@@ -1,49 +1,149 @@
-.PHONY: help shell install test lint migrate
+.PHONY: help shell install start up down build rebuild ps logs \
+         db-migrate db-rollback db-seed db-console \
+         test test-coverage coverage-html \
+         lint phpstan cs-fix cs-check \
+         clean metrics \
+         env-create
 
-# Default UID/GID for proper file permissions
-UID := 1000
-GID := 1000
+# Variables (local)
+USER_ID := $(shell id -u)
+GROUP_ID := $(shell id -g)
 
-help:
-	@echo "Available commands:"
-	@echo "  make shell      - Access PHP container shell"
-	@echo "  make install    - Install PHP dependencies"
-	@echo "  make test       - Run PHPUnit tests"
-	@echo "  make lint       - Run PHP CS Fixer"
-	@echo "  make analyze    - Run PHPStan analysis"
-	@echo "  make migrate    - Run database migrations"
-	@echo "  make up         - Start Docker containers"
-	@echo "  make down       - Stop Docker containers"
+# Executables (local)
+DC = UID=$(USER_ID) GID=$(GROUP_ID) docker compose
 
-shell:
-	UID=$(UID) GID=$(GID) docker compose exec frankenphp sh
+# Docker container name
+DC_APP = frankenphp
+
+# Colors
+RED    := $(shell tput setaf 1)
+GREEN  := $(shell tput setaf 2)
+YELLOW  := $(shell tput setaf 3)
+BLUE    := $(shell tput setaf 4)
+CYAN    := $(shell tput setaf 6)
+RESET   := $(shell tput sgr0)
+
+##—————— Pragmatic Franken ——————
+help: ## Show this help message
+	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | \
+	awk -v c1="$(YELLOW)" -v c2="$(CYAN)" -v c3="$(BLUE)" -v rst="$(RESET)" \
+	'BEGIN {FS = ":.*?## "}; \
+	{ \
+		if ($$1 ~ /^##/) { \
+			printf "\n%s%s%s\n", c2, substr($$1, 3), rst \
+		} else { \
+			printf "  %s%-19s%s %s %s\n", c1, $$1, c3, $$2, rst \
+		} \
+	}'
+
+env-create:
+	@if [ ! -f .env.dist ]; then echo "$(RED)Error: .env.dist not found!$(RESET)"; exit 1; fi
+	cp -i .env.dist .env
+	@echo "" >> .env
+	@echo "# Auto-generated IDs" >> .env
+	@echo "UID=$(USER_ID)" >> .env
+	@echo "GID=$(GROUP_ID)" >> .env
+	@echo "$(GREEN).env created with UID:$(USER_ID) and GID:$(GROUP_ID)$(RESET)"
 
 install:
-	UID=$(UID) GID=$(GID) docker compose exec frankenphp composer install --no-scripts
+	@echo "$(GREEN)Installing dependencies...$(RESET)"
+	$(DC) exec $(DC_APP) composer install --no-scripts
 
-test:
-	UID=$(UID) GID=$(GID) docker compose exec frankenphp ./vendor/bin/phpunit --fail-fast
+start: rebuild up
 
-lint:
-	UID=$(UID) GID=$(GID) docker compose exec frankenphp ./vendor/bin/php-cs-fixer fix --dry-run --diff
+##—————— 🐳 Docker ——————
+build: ## Build Docker images
+	@echo "$(RED)Building Docker images...$(RESET)"
+	$(DC) build --pull
 
-fix:
-	UID=$(UID) GID=$(GID) docker compose exec frankenphp ./vendor/bin/php-cs-fixer fix
+rebuild: ## Rebuild Docker images (no cache)
+	@echo "$(RED)Rebuilding Docker images...$(RESET)"
+	$(DC) build --pull --no-cache
 
-analyze:
-	UID=$(UID) GID=$(GID) docker compose exec frankenphp ./vendor/bin/phpstan analyze src/ --level=5
+ps: ## List running containers
+	@echo "$(YELLOW)Listing containers...$(RESET)"
+	$(DC) ps
 
-migrate:
-	UID=$(UID) GID=$(GID) docker compose exec frankenphp php bin/console doctrine:migrations:migrate --no-interaction
+up: ## Start containers in detached mode
+	@echo "$(YELLOW)Starting containers...$(RESET)"
+	$(DC) up --detach
 
-up:
-	UID=$(UID) GID=$(GID) docker compose up -d
+down: ## Stop and remove containers
+	@echo "$(RED)Stopping containers...$(RESET)"
+	$(DC) down --remove-orphans
 
-down:
-	UID=$(UID) GID=$(GID) docker compose down
+logs: ## Follow container logs
+	@echo "$(YELLOW)Showing and following logs...$(RESET)"
+	$(DC) logs --tail=20 --follow
 
-build:
-	UID=$(UID) GID=$(GID) docker compose build --pull
+composer-chown: ## Fix composer cache permissions
+	@echo "$(YELLOW)Fixing composer cache permissions...$(RESET)"
+	$(DC) exec $(DC_APP) chown -R $(USER_ID):$(GROUP_ID) /var/www/.composer 2>/dev/null || \
+	$(DC) exec $(DC_APP) bash -c 'chown -R 1000:1000 /var/www/.composer' || true
+	@echo "$(GREEN)Composer cache permissions fixed!$(RESET)"
 
-logs:
-	UID=$(UID) GID=$(GID) docker compose logs -f frankenphp
+##—————— FrankenPHP ——————
+shell: ## Connect to FrankenPHP container shell
+	@if [ -z "$$(docker ps -q -f name=$(DC_APP))" ]; then \
+		echo "$(YELLOW)Container $(DC_APP) not running. Starting...$(RESET)"; \
+		$(DC) up -d $(DC_APP); \
+		echo "$(GREEN)Container started.$(RESET)"; \
+	fi
+	$(DC) exec $(DC_APP) bash
+
+##—————— Database ——————
+db-migrate: ## Run database migrations
+	@echo "$(BLUE)Running migrations...$(RESET)"
+	$(DC) exec $(DC_APP) bin/console doctrine:migrations:migrate --no-interaction
+
+db-rollback: ## Rollback last migration
+	@echo "$(BLUE)Rolling back last migration...$(RESET)"
+	$(DC) exec $(DC_APP) bin/console doctrine:migrations:migrate prev --no-interaction
+
+db-seed: ## Load fixtures
+	@echo "$(BLUE)Seeding database...$(RESET)"
+	$(DC) exec $(DC_APP) bin/console doctrine:fixtures:load --no-interaction
+
+db-console: ## Connect to PostgreSQL console
+	@echo "$(CYAN)Connecting to PostgreSQL...$(RESET)"
+	$(DC) exec postgres psql -U postgres -d app
+
+##—————— Tests ——————
+test: ## Run PHPUnit tests
+	@echo "$(GREEN)Running PHPUnit tests...$(RESET)"
+	$(DC) exec $(DC_APP) ./vendor/bin/phpunit --fail-fast
+
+test-coverage: ## Run tests with coverage report
+	@echo "$(GREEN)Running tests with coverage...$(RESET)"
+	$(DC) exec $(DC_APP) ./vendor/bin/phpunit --coverage-text
+
+coverage-html: ## Generate HTML coverage report
+	@echo "$(GREEN)Generating HTML coverage report...$(RESET)"
+	$(DC) exec $(DC_APP) ./vendor/bin/phpunit --coverage-html=coverage
+
+##—————— Code Quality ——————
+lint: phpstan cs-check ## Run all linters
+
+phpstan: ## Run PHPStan static analysis
+	@echo "$(YELLOW)Running PHPStan...$(RESET)"
+	$(DC) exec $(DC_APP) ./vendor/bin/phpstan analyze --level=5
+
+cs-fix: ## Fix code style with PHP-CS-Fixer
+	@echo "$(YELLOW)Fixing code style...$(RESET)"
+	$(DC) exec $(DC_APP) ./vendor/bin/php-cs-fixer fix
+
+cs-check: ## Check code style
+	@echo "$(YELLOW)Checking code style...$(RESET)"
+	$(DC) exec $(DC_APP) ./vendor/bin/php-cs-fixer check --dry-run --diff
+
+##—————— Maintenance ——————
+clean: ## Clean cache and temporary files
+	@echo "Cleaning cache and temporary files..."
+	rm -rf build/ .phpunit.result.cache coverage/ var/cache/*
+	@echo "$(GREEN)Clean complete!$(RESET)"
+
+metrics: ## Show project metrics
+	@echo "$(GREEN)Project metrics:$(RESET)"
+	@echo "  PHP files: $$(find src -name '*.php' 2>/dev/null | wc -l)"
+	@echo "  Test files: $$(find tests -name '*.php' 2>/dev/null | wc -l)"
+	@echo "  Docs: $$(find docs -name '*.md' 2>/dev/null | wc -l)"

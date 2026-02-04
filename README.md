@@ -3,6 +3,7 @@
 Pragmatic Franken is a no-compromise skeleton template for building high-performance PHP applications. The project combines the flexibility of Symfony with the power of FrankenPHP, packaging everything into a perfectly configured Docker infrastructure.
 
 ## 🛠 Technologies
+
 - **PHP 8.5 (Alpine)**: Latest features (Pipe operator, URI extension).
 - **FrankenPHP**: Go-based application server with Worker Mode support.
 - **PostgreSQL 16**: Primary database.
@@ -13,20 +14,102 @@ Pragmatic Franken is a no-compromise skeleton template for building high-perform
 
 1. **Start the project:**
    ```bash
-   docker compose up -d
+   make up
    ```
 
 2. **Install dependencies:**
    ```bash
-   docker compose exec app composer install
+   make install
    ```
 
 3. **Run migrations:**
    ```bash
-   docker compose exec app php bin/console doctrine:migrations:migrate
+   make db-migrate
    ```
 
 Project will be available at: https://localhost (or http://localhost).
+
+## 🤖 AI-First Development
+
+This repository is optimized for **Vibe Coding** with AI agents (Cursor, Windsurf, GitHub Copilot).
+
+### Ready for Vibe Coding
+
+The root `AGENTS.md` file provides pre-defined context and rules for AI agents to maintain Pragmatic DDD structure automatically.
+
+Simply point your AI agent to `AGENTS.md`, and it will:
+- Follow Pragmatic DDD patterns consistently
+- Use the correct Command/Query/Event Bus implementations
+- Respect Modular Monolith boundaries
+- Apply PHP 8.5 features correctly
+
+### 🚀 AI-Driven Workflow
+
+This repo is optimized for Vibe Coding. The root contains an `AGENTS.md` file designed for Cursor / Windsurf / Copilot Custom Instructions.
+
+Simply point your AI agent to this file, and it will:
+- Follow Pragmatic DDD patterns consistently
+- Use the correct Command/Query/Event Bus implementations
+- Respect the Modular Monolith boundaries
+- Apply PHP 8.5 features (property promotion, typed constants, etc.) correctly
+
+## 📁 Project Structure
+
+```
+pragmatic-franken/
+├── src/
+│   ├── Kernel.php              # Symfony MicroKernel
+│   ├── User/                   # Module (Bounded Context)
+│   │   ├── Features/
+│   │   │   ├── RegisterUser/
+│   │   │   │   ├── RegisterUserAction.php       # Controller
+│   │   │   │   ├── RegisterUserMessage.php      # DTO
+│   │   │   │   ├── RegisterUserHandler.php       # Business Logic
+│   │   │   │   └── RegisterUserResponse.php      # Response
+│   │   │   └── Events/
+│   │   │       └── UserRegisteredEvent.php       # Domain Event
+│   │   ├── Entity/
+│   │   │   └── User.php
+│   │   └── Repository/
+│   └── Shared/                 # Cross-module Shared Kernel
+│       ├── Messaging/          # Messenger config
+│       └── EventBus.php
+├── config/                     # Symfony configuration
+├── docker/
+│   ├── frankenphp/             # FrankenPHP config
+│   ├── php/                    # PHP extensions
+│   └── ...
+├── docs/                       # Architecture Decision Records
+├── tests/                      # PHPUnit tests
+├── .github/workflows/          # CI/CD pipelines
+├── Caddyfile                   # FrankenPHP server config
+├── docker-compose.yml
+├── Makefile
+└── AGENTS.md                   # AI Agent instructions
+```
+
+## 🔄 Application Flow
+
+```mermaid
+flowchart TD
+    A[HTTP Request] --> B[Action / Controller]
+    B --> C[Message / Command]
+    C --> D[Handler]
+    D --> E[Entity / Domain]
+    D --> F[Repository]
+    E --> G[Domain Event]
+    G --> H[Event Bus]
+    H --> I[Async Handlers]
+    H --> J[Mercure / Real-time]
+
+    subgraph Persistence
+        F --> K[(PostgreSQL)]
+    end
+
+    subgraph Cache
+        D --> L[(Redis)]
+    end
+```
 
 ## 🏗 Docker Architecture
 
@@ -35,14 +118,16 @@ Multi-stage build is used:
 - **php_dev**: Development layer (Xdebug, dev dependencies).
 - **php_prod**: Optimized layer for production (Worker Mode, Preload, AssetMapper).
 
-## 🛡 Security and CI/CD
+## 🛡 CI/CD Pipeline
 
 On each push to main, GitHub Actions performs:
+
 1. **Gitleaks**: Search for secrets in code.
 2. **Composer Audit**: Check for vulnerabilities in PHP packages.
 3. **Trivy**: Scan image for system vulnerabilities.
-4. **PHPStan**: Static analysis (Level 5).
-5. **PHPUnit**: Run tests.
+4. **PHPStan**: Static analysis (Level 8).
+5. **PHP-CS-Fixer**: Code style enforcement.
+6. **PHPUnit**: Run tests.
 
 ## 📊 Monitoring and Metrics
 
@@ -59,3 +144,11 @@ Tasks are executed via Symfony Scheduler inside the main FrankenPHP container. P
 - Xdebug configured on port 9003.
 - Host: host.docker.internal
 - IDE Key: PHPSTORM or VS Code "PHP Debug" extension.
+
+## 📚 Documentation
+
+See `/docs/` folder for Architecture Decision Records:
+
+- **why-frankenphp.md**: Performance benefits, 103 Early Hints, Mercure integration.
+- **why-modular-monolith.md**: How to separate modules for future microservices.
+- **decision-on-outbox.md**: Guaranteed event delivery patterns.
