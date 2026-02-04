@@ -60,45 +60,47 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Security Check - Dependencies
-        run: |
-          docker run --rm \
-            -w /app \
-            app:test \
-            sh -c "curl -s https://github.com/FriendsOfPHP/security-advisories/raw/master/symfony/symfony.yaml -o symfony.yaml 2>/dev/null || true"
-
-      - name: Composer Audit
-        run: |
-          docker run --rm \
-            -w /app \
-            app:test \
-            composer audit || true
-
-      - name: Trivy Container Scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'app:test'
-          format: 'table'
-          severity: 'HIGH,CRITICAL'
-          exit-code: '1'
-        continue-on-error: true
+      # ========================================================================
+      # SECURITY BLOCK - Fail on critical vulnerabilities
+      # ========================================================================
 
       - name: Gitleaks Scan
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: PHPStan Static Analysis
+      - name: Composer Audit
         run: |
           docker run --rm \
+            -w /app \
             app:test \
-            ./vendor/bin/phpstan analyze src/ --level=5 --no-progress || true
+            composer audit --no-dev || exit 1
+
+      - name: Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'app:test'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+
+      # ========================================================================
+      # CODE QUALITY
+      # ========================================================================
+
+      - name: PHPStan Static Analysis
+        run: |
+          docker run --rm app:test \
+            ./vendor/bin/phpstan analyze src/ --level=5 --no-progress || exit 1
 
       - name: PHP CS Fixer Check
         run: |
-          docker run --rm \
-            app:test \
-            ./vendor/bin/php-cs-fixer fix --dry-run --diff src/ || true
+          docker run --rm app:test \
+            ./vendor/bin/php-cs-fixer fix --dry-run --diff src/ || exit 1
+
+      # ========================================================================
+      # TESTS
+      # ========================================================================
 
       - name: Run PHPUnit Tests
         run: |
@@ -109,7 +111,7 @@ jobs:
             -e REDIS_URL="redis://127.0.0.1:6379" \
             -e MESSENGER_TRANSPORT_DSN="redis://127.0.0.1:6379/messages" \
             app:test \
-            ./vendor/bin/phpunit --configuration phpunit.xml --fail-fast || true
+            ./vendor/bin/phpunit --configuration phpunit.xml --fail-fast || exit 1
 
       - name: Log in to Container Registry
         if: success()
