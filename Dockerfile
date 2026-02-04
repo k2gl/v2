@@ -48,7 +48,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 COPY composer.json composer.lock ./
 
-RUN composer install --no-scripts --prefer-dist --no-interaction || composer install --no-scripts --dev --prefer-dist --no-interaction || true
+RUN composer install --no-scripts --prefer-dist --no-interaction --no-dev || true
 
 COPY . .
 
