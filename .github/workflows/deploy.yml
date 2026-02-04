@@ -74,6 +74,15 @@ jobs:
             app:test \
             composer audit || true
 
+      - name: Snyk Container Scan
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: app:test
+          args: --severity-threshold=high
+        continue-on-error: true
+
       - name: PHPStan Static Analysis
         run: |
           docker run --rm \
