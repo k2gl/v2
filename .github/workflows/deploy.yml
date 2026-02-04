@@ -101,7 +101,7 @@ jobs:
             -e REDIS_URL="redis://127.0.0.1:6379" \
             -e MESSENGER_TRANSPORT_DSN="redis://127.0.0.1:6379/messages" \
             app:test \
-            php bin/phpunit || exit 1
+            php vendor/bin/phpunit || exit 1
 
       - name: Log in to Container Registry
         if: success()
