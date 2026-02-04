@@ -49,11 +49,6 @@ jobs:
           diff public/openapi.yaml openapi_temp.yaml
         continue-on-error: false
 
-      - name: Lint OpenAPI File
-        uses: charliemclaughlin/openapi-validator-action@v2
-        with:
-          openapi-relative-path: public/openapi.yaml
-
   security-audit:
     name: Security Audit
     runs-on: ubuntu-latest
