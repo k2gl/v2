@@ -2,7 +2,7 @@
 
 ## Overview
 
-The `AGENTS.local.md` file allows you to personalize AI agent behavior without modifying shared project rules. This file is gitignored, so your settings won't affect other team members.
+The `agents.local.md` file allows you to personalize AI agent behavior without modifying shared project rules. This file is gitignored, so your settings won't affect other team members.
 
 ## File Structure
 

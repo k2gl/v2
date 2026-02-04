@@ -26,7 +26,7 @@ Thank you for your interest in contributing! This guide will help you get starte
 
 ## Code Standards
 
-- All code must follow DDD patterns (see `AGENTS.md`)
+- All code must follow DDD patterns (see `.config/agents/agents.md`)
 - PHP 8.5+ with strict typing
 - All tests must pass
 - PHPStan level 8 compliance
@@ -52,13 +52,26 @@ We use [Conventional Commits](https://www.conventionalcommits.org/) for clear ch
 
 ```
 pragmatic-franken/
-├── src/           # Business logic
-├── config/        # Symfony configuration
-├── docs/          # Architecture decisions
-├── tests/         # PHPUnit tests
-├── docker/        # Docker configuration
-├── Makefile       # Development commands
-└── .github/       # CI/CD workflows
+├── src/
+│   ├── Kernel.php              # Symfony MicroKernel
+│   ├── User/                   # Module (Bounded Context)
+│   │   ├── Features/          # Vertical Slices
+│   │   ├── Entity/
+│   │   └── Repository/
+│   └── Shared/                # Cross-module Shared Kernel
+├── config/                     # Symfony configuration
+├── docker/
+│   ├── frankenphp/            # FrankenPHP config
+│   └── php/                   # PHP extensions
+├── docs/                       # Architecture decisions
+├── tests/                      # PHPUnit tests
+├── .github/
+│   ├── workflows/             # CI/CD pipelines
+│   └── CONTRIBUTING.md         # This file
+├── Caddyfile                  # FrankenPHP server config
+├── docker-compose.yml
+├── Makefile
+└── .config/agents/            # AI agent configurations
 ```
 
 ## Getting Help

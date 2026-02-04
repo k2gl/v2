@@ -54,7 +54,7 @@ pragmatic-franken/
 ├── src/
 │   ├── Kernel.php              # Symfony MicroKernel
 │   ├── User/                   # Module (Bounded Context)
-│   │   ├── Features/
+│   │   ├── Features/          # Vertical Slices
 │   │   │   ├── RegisterUser/
 │   │   │   │   ├── RegisterUserAction.php       # Controller
 │   │   │   │   ├── RegisterUserMessage.php      # DTO
@@ -70,16 +70,19 @@ pragmatic-franken/
 │       └── EventBus.php
 ├── config/                     # Symfony configuration
 ├── docker/
-│   ├── frankenphp/             # FrankenPHP config
-│   ├── php/                    # PHP extensions
+│   ├── frankenphp/            # FrankenPHP config + Caddyfile
+│   ├── php/                   # PHP extensions
 │   └── ...
-├── docs/                       # Architecture Decision Records
+├── docs/                       # Architecture decisions and guides
 ├── tests/                      # PHPUnit tests
-├── .github/workflows/          # CI/CD pipelines
-├── Caddyfile                   # FrankenPHP server config
+├── .github/
+│   ├── workflows/             # CI/CD pipelines
+│   └── CONTRIBUTING.md        # Contribution guidelines
+├── Caddyfile                  # FrankenPHP server config (symlinked)
 ├── docker-compose.yml
 ├── Makefile
-└── AGENTS.md                   # AI Agent instructions
+├── AGENTS.md                  # AI Agent entry point
+└── .config/agents/            # AI Agent configurations
 ```
 
 ## 🔄 Application Flow
