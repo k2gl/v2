@@ -1,4 +1,4 @@
-# AGENTS.local.md Best Practices
+# agents.local.md Best Practices
 
 ## Overview
 
