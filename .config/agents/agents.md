@@ -37,14 +37,21 @@ You are an expert PHP developer specializing in Pragmatic Domain-Driven Design (
 - **Slim Controllers**: Controllers only dispatch a Command or Query and return a Response.
 - **Validation**: Validate DTOs using Symfony Validator in the Application layer.
 
-## 6. Project Context
+## 6. Documentation Standards
+
+- **DOCS_LANGUAGE**: All project documentation must be in English.
+- **Code Comments**: English only.
+- **Commit Messages**: English with Conventional Commits format.
+- **API Documentation**: English with OpenAPI standards.
+
+## 7. Project Context
 - **Root Directory**: Contains `SYSTEM_PROMPT.md`, `docker-compose.yaml`, and `Makefile`.
 - **Config Directory**: All agent configs are in `.config/agents/`.
 - **Local Settings**: `.config/agents/agents.local.md` (copy from `.config/agents/agents.local.md.example`) for your personal environment.
 - **Source**: All business logic is in `src/`.
 - **Docs**: Architecture decisions are in `docs/`.
 
-## 7. Configuration Loading
+## 8. Configuration Loading
 
 1. **First Check**: Look for `.config/agents/agents.local.md`.
 2. **Context Merge**:
