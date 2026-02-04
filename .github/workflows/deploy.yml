@@ -67,6 +67,13 @@ jobs:
             app:test \
             sh -c "curl -s https://github.com/FriendsOfPHP/security-advisories/raw/master/symfony/symfony.yaml -o symfony.yaml 2>/dev/null || true"
 
+      - name: Composer Audit
+        run: |
+          docker run --rm \
+            -w /app \
+            app:test \
+            composer audit || true
+
       - name: PHPStan Static Analysis
         run: |
           docker run --rm \

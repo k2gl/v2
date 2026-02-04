@@ -64,31 +64,15 @@ ENV APP_RUNTIME="Runtime\\FrankenPhp\\Symfony\\Runtime"
 
 COPY --from=php_builder /app/vendor /app/vendor
 
-COPY bin bin/
 COPY config config/
 COPY public public/
 COPY src src/
-COPY templates templates/
-COPY translations translations/
-COPY var var/
 
-RUN mkdir -p public/assets
+RUN mkdir -p templates translations var
 
 COPY ./docker/php/prod-optimizations.ini $PHP_INI_DIR/conf.d/
 
-# Compile assets with Symfony AssetMapper (no Node.js required)
-RUN php bin/console asset-map:compile
-
-# Validate Symfony configuration
-RUN php bin/console lint:container
-
-# Clear and warmup cache for production
-RUN php bin/console cache:clear --env=prod --no-warmup \
-    && php bin/console cache:warmup --env=prod
-
-# Set proper permissions
-RUN chmod -R 755 bin/ \
-    && chown -R root:root .
+RUN chmod -R 755 config/
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN chmod +x /usr/local/bin/docker-entrypoint
