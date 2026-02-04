@@ -30,41 +30,47 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.5'
-          extensions: mbstring, xml, ctype, iconv, intl, pdo_pgsql, redis
-          coverage: none
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Install Dependencies
-        run: composer install --no-interaction --no-progress
+      - name: Build Dev Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: php_dev
+          load: true
+          tags: app:test
 
       - name: Generate OpenAPI Schema
         run: |
-          php bin/console nelmio:apidoc:dump --format=yaml > openapi_temp.yaml
+          docker run --rm \
+            --network host \
+            -e DATABASE_URL="postgres://user:password@127.0.0.1:5432/app_db" \
+            app:test \
+            php bin/console nelmio:apidoc:dump --format=yaml > openapi_temp.yaml
 
       - name: Check for OpenAPI Drift
-        run: |
-          diff public/openapi.yaml openapi_temp.yaml
-        continue-on-error: false
+        run: diff public/openapi.yaml openapi_temp.yaml || exit 1
 
   security-audit:
     name: Security Audit
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.5'
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      - name: Install Dependencies
-        run: composer install --no-interaction --no-progress
+      - name: Build Dev Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          target: php_dev
+          load: true
+          tags: app:test
 
       - name: Security Check
         run: |
-          composer audit --format=summary
-        continue-on-error: false
+          docker run --rm app:test composer audit --format=summary || exit 1
