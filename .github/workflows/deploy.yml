@@ -59,6 +59,8 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: --verbose --log-opts="--all" --exclude="vendor/,*.min.js,*.min.css"
 
       # 2. Сборка тестового образа
       - name: Build Dev Image
