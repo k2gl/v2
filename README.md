@@ -165,26 +165,30 @@ Tasks are executed via Symfony Scheduler inside the main FrankenPHP container. P
 
 ## 📚 Documentation
 
-See `/docs/` folder for:
-
 ### Architecture
-- **why-frankenphp.md**: Performance benefits, 103 Early Hints, Mercure integration.
-- **why-modular-monolith.md**: How to separate modules for future microservices.
-- **decision-on-outbox.md**: Guaranteed event delivery patterns.
+
+- [Why FrankenPHP?](./docs/why-frankenphp.md) — Performance benefits, 103 Early Hints, Mercure integration
+- [Modular Monolith](./docs/why-modular-monolith.md) — Module boundaries and future microservices
+- [Outbox Pattern](./docs/decision-on-outbox.md) — Guaranteed event delivery
 
 ### Guides
-- **development.md**: Quick start and daily commands.
-- **testing.md**: Testing strategies (Unit, Integration, E2E).
-- **agent-setup.md**: AI agent configuration.
-- **agents-local-config.md**: Personal preferences for AI agents.
-- **ai-automation.md**: Free AI tools for repository maintenance.
+
+- [Development Guide](./docs/guides/development.md) — Quick start and daily commands
+- [Testing Guide](./docs/guides/testing.md) — Unit, Integration, E2E strategies
+- [AI Agent Setup](./docs/guides/agent-setup.md) — Configure Cursor, Windsurf, Copilot
+- [Local Agent Config](./docs/guides/agents-local-config.md) — Personal preferences for AI
+- [AI Automation](./docs/guides/ai-automation.md) — Free AI tools for repository maintenance
+
+### Contribution
+
+- [Contributing Guidelines](./.github/CONTRIBUTING.md) — How to contribute
 
 ## 🔧 Automation & AI Tools
 
 The project is configured with:
 
-- **Conventional Commits**: Automatic PR validation.
-- **Dependabot**: Auto-update dependencies.
-- **CodiumAI**: Free PR reviews (setup required).
+- **Conventional Commits**: Automatic PR validation
+- **Dependabot**: Auto-update dependencies
+- **CodiumAI**: Free PR reviews (setup required)
 
-See `docs/guides/ai-automation.md` for setup instructions.
+See [AI Automation Guide](./docs/guides/ai-automation.md) for setup instructions.
