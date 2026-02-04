@@ -4,7 +4,6 @@
 
 # Dependencies
 /vendor
-/composer.lock
 
 # Symfony Cache & Logs
 /var/cache/*
