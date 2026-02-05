@@ -56,7 +56,7 @@ jobs:
         run: mkdir -p var/cache/test
 
       - name: PHPStan Analysis
-        run: vendor/bin/phpstan analyse -c phpstan.neon
+        run: vendor/bin/phpstan analyse -c phpstan.neon --level=5
 
       - name: PHP-CS-Fixer
         run: vendor/bin/php-cs-fixer fix --dry-run --diff

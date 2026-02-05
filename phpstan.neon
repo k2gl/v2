@@ -1,10 +1,7 @@
 parameters:
-    level: 8
+    level: 5
     paths:
         - src
-
-    symfony:
-        container_xml_path: var/cache/dev/App_KernelDevDebugContainer.xml
 
     ignoreErrors:
         - '#Property .+ is never written, only read.#'
