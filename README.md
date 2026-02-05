@@ -4,7 +4,7 @@
 [![FrankenPHP](https://img.shields.io/badge/FrankenPHP-1.x-006b5b?logo=docker&logoColor=white)](https://frankenphp.dev/)
 [![Symfony 7.2](https://img.shields.io/badge/Symfony-7.2-000000?logo=symfony&logoColor=white)](https://symfony.com/)
 [![License MIT](https://img.shields.io/badge/License-MIT-yellowgreen)](https://opensource.org/licenses/MIT)
-[![CI Pipeline](https://img.shields.io/github/actions/workflow/status/k2gl/pragmatic-franken/conventional-commits.yml?branch=main&label=CI)](https://github.com/k2gl/pragmatic-franken/actions)
+[![CI Pipeline](https://img.shields.io/github/actions/workflow/status/k2gl/pragmatic-franken/ci.yml?branch=main&label=CI)](https://github.com/k2gl/pragmatic-franken/actions)
 
 > Symfony project with FrankenPHP, DDD patterns, and Docker infrastructure.
 
