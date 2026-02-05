@@ -1,4 +1,4 @@
-# 🚀 Pragmatic Franken
+# 🧑‍💻 Pragmatic Franken
 
 > **Why waste time on repetitive boilerplate?**
 > Pragmatic Franken is a unified, production-ready foundation built on Symfony and FrankenPHP. Focus on logic, not configuration.
@@ -20,7 +20,19 @@
 
 ---
 
-## 🚀 Instant Start
+## 🏗 Pragmatic Stack
+
+| Feature | Tech | Why? |
+|---------|------|------|
+| Runtime | FrankenPHP | 103 Early Hints, Mercure, and Go-speed. |
+| Architecture | Vertical Slices | Features are isolated. High cohesion, low coupling. |
+| Database | PostgreSQL 16 | Robust, modern, ready for scale. |
+| Async | Messenger + Redis | Built-in CQRS for background heavy lifting. |
+| Observability | Prometheus + Grafana | Built-in metrics on port 2019 |
+
+---
+
+## 🧑‍🎤 Instant Start
 
 ```bash
 # 1. Clone and ignite
@@ -34,7 +46,7 @@ make install
 
 ---
 
-## 🤖 AI Copilot Mode
+## 🤖 AI-Driven Development
 
 This repo is **self-documenting for AI**.
 
@@ -49,24 +61,9 @@ The AI will:
 3. Set up the Command Bus and Messenger transport.
 4. Ensure everything is compatible with FrankenPHP Worker Mode.
 
----
-
-## 🤖 AI-Driven Development
-
 - **AGENTS.md** — The entry point for your AI.
 - **prompts/check-docs.md** — Run this to sync your AI with our ADRs.
 - **Local Vibe** — Custom tool paths in `.config/agents/agents.local.md`.
-
----
-
-## 🏗 Pragmatic Stack
-
-| Feature | Tech | Why? |
-|---------|------|------|
-| Runtime | FrankenPHP | 103 Early Hints, Mercure, and Go-speed. |
-| Architecture | Vertical Slices | Features are isolated. High cohesion, low coupling. |
-| Database | PostgreSQL 16 | Robust, modern, ready for scale. |
-| Async | Messenger + Redis | Built-in CQRS for background heavy lifting. |
 
 ---
 
