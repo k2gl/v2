@@ -11,10 +11,10 @@
 
 ---
 
-## ⚡️ The Vibe
+## ⚡️ The "Vibe"
 
 - **One Binary to Rule Them All**: No Nginx, no FPM. Just FrankenPHP.
-- **Worker Mode by Default**: Boot once, handle thousands of requests.
+- **Worker Mode by Default**: Insane performance (boot once, handle thousands of requests).
 - **AI-Native**: Pre-configured contexts for Cursor, Windsurf, and Copilot.
 - **Pragmatic Architecture**: Vertical Slices instead of messy layers.
 
@@ -24,10 +24,10 @@
 
 ```bash
 # 1. Clone and ignite
-git clone https://github.com/k2gl/pragmatic-franken.git && cd pragmatic-franken
+git clone https://github.com && cd pragmatic-franken
 
 # 2. The Magic Command
-make setup
+make install
 ```
 
 **Boom!** Your app is live at https://localhost with automatic HTTPS.
@@ -36,41 +36,36 @@ make setup
 
 ## 🤖 AI-Driven Development
 
-This repository is optimized for AI agents. We provide structured contexts so your AI assistant understands the architecture better than you do.
-
-| File | Purpose |
-|------|---------|
-| [AGENTS.md](AGENTS.md) | Entry point for AI — core rules and patterns |
-| [prompts/check-docs.md](prompts/check-docs.md) | Run this before any task to sync AI with ADRs |
-| [.config/agents/agents.local.md](.config/agents/agents.local.md) | Your personal preferences (gitignored) |
-
-**Pro tip:** Run `cat prompts/check-docs.md` to understand how AI validates documentation.
+- **AGENTS.md** — The entry point for your AI.
+- **prompts/check-docs.md** — Run this to sync your AI with our ADRs.
+- **Local Vibe** — Custom tool paths in `.config/agents/agents.local.md`.
 
 ---
 
-## 📦 The Pragmatic Stack
+## 🏗 Pragmatic Stack
 
-| Layer | Technology | Why? |
-|-------|------------|------|
-| Runtime | FrankenPHP | 103 Early Hints, Mercure, Go-speed. Single binary. |
-| Architecture | Vertical Slices | Isolated features. High cohesion, low coupling. |
-| CQRS | Messenger + Redis | Built-in async for background heavy lifting |
-| Database | PostgreSQL 16 | Robust, modern, ACID-compliant |
-| Cache | Redis 7 | Sessions, cache, Messenger transport |
+| Feature | Tech | Why? |
+|---------|------|------|
+| Runtime | FrankenPHP | 103 Early Hints, Mercure, and Go-speed. |
+| Architecture | Vertical Slices | Features are isolated. High cohesion, low coupling. |
+| Database | PostgreSQL 16 | Robust, modern, ready for scale. |
+| Async | Messenger + Redis | Built-in CQRS for background heavy lifting. |
 
 ---
 
 ## 📐 The Pragmatic Way
 
-- **Slices over Layers** — Features first, not technical layers ([ADR 0001](docs/adr/0001-vertical-slices.md))
-- **Commands over Classes** — Intent-driven code over abstract factories ([ADR 0002](docs/adr/0002-messenger-transport.md))
-- **Safety over Cleverness** — Write code that survives Worker Mode restarts ([ADR 0006](docs/adr/0006-memory-management.md))
+How we write code:
+
+1. Create a Feature Slice
+2. Define a Command or Query
+3. Handle it
+
+**No over-engineering.**
 
 ---
 
 ## ⚡️ Worker Mode Rules
-
-**Write code that survives process restarts:**
 
 | Rule | Bad | Good |
 |------|-----|------|
@@ -79,13 +74,9 @@ This repository is optimized for AI agents. We provide structured contexts so yo
 | Clean shutdown | Implicit memory leaks | `register_shutdown_function()` |
 | Avoid singletons | `Singleton::getInstance()` | Dependency Injection |
 
-See [Worker Mode Guide](docs/guides/worker-mode.md) for details.
-
 ---
 
-## 🛠 Architecture Decisions (ADR)
-
-Every decision is documented. No "because I said so".
+## 🛠 ADR: Architecture Decision Records
 
 | ADR | Topic | Priority |
 |-----|-------|----------|
@@ -97,7 +88,32 @@ Every decision is documented. No "because I said so".
 | [0006](docs/adr/0006-memory-management.md) | Memory Management | P2 |
 | [0007](docs/adr/0007-asset-mapper.md) | AssetMapper | P2 |
 
-[Read all ADRs →](docs/adr/)
+---
+
+## 🔄 Deep Dive
+
+```mermaid
+flowchart TD
+    A[HTTP Request] --> B[Controller / EntryPoint]
+    B --> C[Command / Query]
+    C --> D[Handler]
+    D --> E[Entity / Domain]
+    D --> F[Repository]
+    E --> G[Domain Event]
+    G --> H[Event Bus]
+    H --> I[Async Handlers]
+    H --> J[Mercure / Real-time]
+
+    subgraph Persistence
+        F --> K[(PostgreSQL)]
+    end
+
+    subgraph Cache
+        D --> L[(Redis)]
+    end
+```
+
+**See [ADR 0002](docs/adr/0002-messenger-transport.md) for Message Bus implementation details.**
 
 ---
 
@@ -128,32 +144,24 @@ pragmatic-franken/
 │   └── php/                   # Extensions
 ├── docs/
 │   ├── adr/                   # Architecture Decisions
-│   └── guides/                # How-to guides
+│   └── guides/                 # How-to guides
 ├── tests/
 │   ├── Unit/
 │   ├── Integration/
 │   └── EndToEnd/
 ├── Makefile
 ├── docker-compose.yml
-└── prompts/                  # AI agent prompts and validation scripts
+└── prompts/                    # AI agent prompts
 ```
-
----
-
-## 🐞 Debugging
-
-- **Xdebug**: Port 9003, IDE key: PHPSTORM or VS Code
-- **Health check**: http://localhost/healthz
-- **Prometheus metrics**: http://localhost:2019
 
 ---
 
 ## 📚 Guides
 
-- [Development Guide](docs/guides/development.md) — Quick start and daily commands
-- [Testing Guide](docs/guides/testing.md) — Unit, Integration, E2E strategies
-- [AI Agent Setup](docs/guides/agent-setup.md) — Configure Cursor, Windsurf, Copilot
-- [Worker Mode Guide](docs/guides/worker-mode.md) — Writing safe async code
+- [Development Guide](docs/guides/development.md)
+- [Testing Guide](docs/guides/testing.md)
+- [Worker Mode Guide](docs/guides/worker-mode.md)
+- [AI Agent Setup](docs/guides/agent-setup.md)
 
 ---
 
