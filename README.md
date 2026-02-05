@@ -10,14 +10,16 @@
 
 ## 🎯 Key Features
 
-- **Modular Architecture** — DDD patterns with clear module boundaries
-- **AI-Ready** — AGENTS.md for AI assistant configuration
+- **Modular Vertical Slices** — Feature-based code organization ([ADR 0001](docs/adr/0001-vertical-slices.md))
+- **Pragmatic Symfony** — Minimal abstractions, maximum speed ([ADR 0003](docs/adr/0003-pragmatic-symfony-architecture.md))
+- **CQRS Pattern** — Command/Query separation via Messenger ([ADR 0002](docs/adr/0002-messenger-transport.md))
+- **AI-Ready** — Structured prompts and documentation validation ([prompts/check-docs.md](prompts/check-docs.md))
 - **Developer Experience** — `make up` for quick start
 
 ## 🛠 Technologies
 
 - **PHP 8.5 (Alpine)**: Latest features (Pipe operator, URI extension).
-- **FrankenPHP**: Go-based application server with Worker Mode support.
+- **FrankenPHP**: Application server with Worker Mode — enables async handlers in the same process, eliminating queue infrastructure complexity.
 - **PostgreSQL 16**: Primary database.
 - **Redis 7**: Cache, sessions, and Messenger.
 - **Caddy**: Automatic HTTPS and HTTP/3.
@@ -29,7 +31,7 @@
 - Built-in Mercure for real-time updates
 - Prometheus metrics on port 2019
 
-See [ADR 002: FrankenPHP Runtime](docs/adr/adr-002-frankenphp-runtime.md) for details.
+See [ADR 0004: FrankenPHP Runtime](docs/adr/0004-frankenphp-runtime.md) for details.
 
 ## 🚀 Quick Start
 
@@ -53,6 +55,15 @@ Project will be available at: https://localhost (or http://localhost).
 ## 🤖 AI Agent Integration
 
 This project is optimized for AI assistants (Cursor, Windsurf, GitHub Copilot).
+
+### Documentation Validation
+
+Before starting any task, run the documentation check prompt:
+```bash
+# Read prompts/check-docs.md and verify documentation consistency
+```
+
+This helps ensure AI assistants work with up-to-date architectural decisions.
 
 ### Local Environment Setup
 
@@ -146,6 +157,8 @@ flowchart TD
     end
 ```
 
+See [ADR 0002](docs/adr/0002-messenger-transport.md) for Message Bus implementation details.
+
 ## 🏗 Docker Architecture
 
 Multi-stage build is used:
@@ -186,14 +199,17 @@ Tasks are executed via Symfony Scheduler inside the main FrankenPHP container. P
 
 All major architectural decisions are documented as ADRs in [`docs/adr/`](docs/adr/):
 
-- [ADR 001: Pragmatic Symfony Architecture](docs/adr/adr-001-pragmatic-symfony-architecture.md) — Core principles, Message Bus Rule, Modular Architecture
-- [ADR 002: FrankenPHP Runtime](docs/adr/adr-002-frankenphp-runtime.md) — Server selection, Stateless Design
-- [ADR 003: AssetMapper](docs/adr/adr-003-asset-mapper.md) — Frontend asset management
-- [ADR 004: Messenger Transport](docs/adr/adr-004-messenger-transport.md) — Command/Query separation, AI use cases
-- [ADR 005: Health Checks](docs/adr/adr-005-health-checks.md) — Docker/K8s probes, PHP endpoints
-- [ADR 006: Memory Management](docs/adr/adr-006-memory-management.md) — PHP/Docker/Worker configuration for AI
+| ADR | Topic | Priority |
+|-----|-------|----------|
+| [0001](docs/adr/0001-vertical-slices.md) | Vertical Slices Architecture | P0 |
+| [0002](docs/adr/0002-messenger-transport.md) | Messenger Transport (CQRS) | P0 |
+| [0003](docs/adr/0003-pragmatic-symfony-architecture.md) | Pragmatic Symfony | P0 |
+| [0004](docs/adr/0004-frankenphp-runtime.md) | FrankenPHP Runtime | P1 |
+| [0005](docs/adr/0005-health-checks.md) | Health Checks | P1 |
+| [0006](docs/adr/0006-memory-management.md) | Memory Management | P2 |
+| [0007](docs/adr/0007-asset-mapper.md) | AssetMapper | P2 |
 
-See [Architecture Overview](docs/ARCHITECTURE.md) for implementation details.
+[Read all ADRs →](docs/adr/)
 
 ### Guides
 
