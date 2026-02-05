@@ -13,32 +13,31 @@
 
 ```
 src/
-├── Shared/                      # Infrastructure (exceptions, services)
+├── Kernel.php              # System core (Symfony MicroKernel)
+├── Shared/                 # Global infrastructure
 │   ├── Exception/
 │   └── Services/
 │
-├── User/                       # Module
+├── User/                   # Module
 │   ├── Entity/
 │   ├── Enums/
-│   ├── Features/
-│   │   └── {FeatureName}/
-│   │       ├── Input/
-│   │       ├── Output/
-│   │       ├── Handler/
-│   │       ├── EntryPoint/
-│   │       │   ├── Http/
-│   │       │   └── Cli/
-│   │       └── Client/
+│   ├── ValueObject/
+│   ├── Event/
+│   ├── Services/
+│   ├── Clients/
+│   ├── Repositories/
+│   ├── Exception/
+│   └── Features/           # Vertical Slices (flat structure)
+│       └── {FeatureName}/
+│           ├── {FeatureName}Command.php
+│           ├── {FeatureName}Query.php
+│           ├── {FeatureName}Handler.php
+│           ├── {FeatureName}Request.php
+│           └── {FeatureName}Response.php
 │
-├── Board/                      # Module
-│   └── ...
-│
-├── Task/                       # Module
-│   └── ...
-│
-└── Health/                     # Technical feature
-    ├── Services/
-    └── Features/
+├── Task/                   # Module (same pattern)
+├── Board/                  # Module (same pattern)
+└── Health/                 # Technical feature (same pattern)
 ```
 
 ## What Goes to Shared?
@@ -58,10 +57,10 @@ src/
 | Features | `CreateUser/` |
 | Command | `CreateUserCommand.php` |
 | Query | `CreateUserQuery.php` |
-| Response | `CreateUserResponse.php` |
 | Handler | `CreateUserHandler.php` |
 | Controller | `CreateUserController.php` |
-| EntryPoint/Http | `CreateUserController.php` |
+| Request | `CreateUserRequest.php` |
+| Response | `CreateUserResponse.php` |
 
 ## Configuration
 

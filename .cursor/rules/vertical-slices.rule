@@ -8,14 +8,15 @@ All feature code MUST be organized in `src/{Module}/Features/{FeatureName}/` str
 ### ✅ DO
 - Create new features under `src/*/Features/{FeatureName}/`
 - Use Command/Query pattern for write/read operations
-- Put EntryPoints (Controllers, Console commands) in `EntryPoint/` subfolder
 - Keep related files together: Command, Handler, Request, Response
+- Name handlers with Handler suffix: `{FeatureName}Handler.php`
 
 ### ❌ DON'T
 - Create controllers directly in `src/*/UI/` or `src/*/Controller/`
 - Mix features from different modules
 - Use generic "Services" folder for feature logic
 - Create "Domain" folders with no feature context
+- Create empty directories
 
 ## Structure Template
 ```
@@ -25,11 +26,9 @@ src/
         └── RegisterUser/
             ├── RegisterUserCommand.php
             ├── RegisterUserHandler.php
-            ├── EntryPoint/
-            │   └── Http/
-            │       └── RegisterUserController.php
-            ├── Request/
-            └── Response/
+            ├── RegisterUserRequest.php
+            ├── RegisterUserResponse.php
+            └── RegisterUserController.php
 ```
 
 ## Violations

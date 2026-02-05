@@ -22,18 +22,6 @@
 
 ---
 
-## 🏗 Pragmatic Stack
-
-| Feature | Tech | Why? |
-|---------|------|------|
-| Runtime | FrankenPHP | 103 Early Hints, Mercure, and Go-speed. |
-| Architecture | Vertical Slices | Features are isolated. High cohesion, low coupling. |
-| Database | PostgreSQL 16 | Robust, modern, ready for scale. |
-| Async | Messenger + Redis | Built-in CQRS for background heavy lifting. |
-| Observability | Prometheus + Grafana | Built-in metrics on port 2019 |
-
----
-
 ## 🧑‍🎤 Instant Start
 
 ```bash
@@ -48,28 +36,37 @@ make install
 
 ---
 
-## 🤖 AI-Driven Development
+## 🤓 Pragmatic Stack
 
-This repo is **self-documenting for AI**.
+| Feature | Tech | Why? |
+|---------|------|------|
+| Runtime | FrankenPHP | 103 Early Hints, Mercure, and Go-speed. |
+| Architecture | [Vertical Slices](docs/adr/0001-vertical-slices.md)  | Features are isolated. High cohesion, low coupling. |
+| Database | PostgreSQL 16 | Robust, modern, ready for scale. |
+| Async | Messenger + Redis | Built-in CQRS for background heavy lifting. |
+| Observability | Prometheus + Grafana | Built-in metrics on port 2019 |
 
-If you use **Cursor** or **Windsurf**, just type:
+---
+
+## 🦸 AI-First DX (Your New Superpower)
+
+This repo isn't just code; it's Agent-Native. We've optimized the structure so Cursor, Windsurf, or GitHub Copilot understand your project better than you do.
+How to summon the magic:
+
+```bash
+@AGENTS.md Implement a new 'Subscription' module following our architecture.
 ```
-@AGENTS.md How do I add a new Task management feature?
-```
+The AI Agent will:
+1. Analyze ADRs: It reads your Architecture Decision Records to keep the code consistent.
+2. Scaffold & Code: Creates folders and writes logic according to the project's patterns.
+3. Verify: Runs tests to ensure nothing is broken.
+4. Deliver: Prepares a PR, ready for your final look.
 
-The AI will:
-1. Read `docs/adr/0001` to understand Vertical Slices.
-2. Create the folder structure in `src/Task/Features/`.
-3. Set up the Command Bus and Messenger transport.
-4. Ensure everything is compatible with FrankenPHP Worker Mode.
-
-- **AGENTS.md** — The entry point for your AI.
-- **prompts/check-docs.md** — Run this to sync your AI with our ADRs.
 - **Local Vibe** — Custom tool paths in `.config/agents/agents.local.md`.
 
 ---
 
-## 🛠 ADR: Architecture Decision Records
+## 📐 ADR: Architecture Decision Records
 
 We don't do "because I said so". Every decision is documented:
 
@@ -82,6 +79,7 @@ We don't do "because I said so". Every decision is documented:
 | [0005](docs/adr/0005-health-checks.md) | Health Checks | P1 |
 | [0006](docs/adr/0006-memory-management.md) | Memory Management | P2 |
 | [0007](docs/adr/0007-asset-mapper.md) | AssetMapper | P2 |
+| [0008](docs/adr/0008-testing-strategy.md) | Testing Strategy (PHPUnit) | P1 |
 
 ---
 
@@ -98,7 +96,7 @@ We don't do "because I said so". Every decision is documented:
 
 ---
 
-## 📐 The Pragmatic Way
+## 🍨 The Pragmatic Way
 
 How we write code:
 
@@ -134,22 +132,6 @@ FrankenPHP Worker Mode vs PHP-FPM benchmarks:
 
 ---
 
-## 🛠 ADR: Architecture Decision Records
-
-We don't do "because I said so". Every decision is documented:
-
-| ADR | Topic | Priority |
-|-----|-------|----------|
-| [0001](docs/adr/0001-vertical-slices.md) | Vertical Slices Architecture | P0 |
-| [0002](docs/adr/0002-messenger-transport.md) | Messenger Transport (CQRS) | P0 |
-| [0003](docs/adr/0003-pragmatic-symfony-architecture.md) | Pragmatic Symfony | P0 |
-| [0004](docs/adr/0004-frankenphp-runtime.md) | FrankenPHP Runtime | P1 |
-| [0005](docs/adr/0005-health-checks.md) | Health Checks | P1 |
-| [0006](docs/adr/0006-memory-management.md) | Memory Management | P2 |
-| [0007](docs/adr/0007-asset-mapper.md) | AssetMapper | P2 |
-
----
-
 ## 🔄 Deep Dive
 
 ```mermaid
@@ -180,38 +162,29 @@ flowchart TD
 ## 📁 Project Structure
 
 ```
-pragmatic-franken/
-├── src/
-│   ├── Kernel.php              # Symfony MicroKernel
-│   ├── User/                   # Module (Bounded Context)
-│   │   ├── Entity/
-│   │   ├── Enums/
-│   │   └── Features/           # Vertical Slices
-│   │       ├── RegisterUser/
-│   │       │   ├── RegisterUserCommand.php
-│   │       │   ├── RegisterUserHandler.php
-│   │       │   ├── EntryPoint/Http/
-│   │       │   │   └── RegisterUserController.php
-│   │       │   ├── Request/
-│   │       │   └── Response/
-│   │       └── Events/
-│   │           └── UserRegisteredEvent.php
-│   └── Shared/                 # Cross-module kernel
-│       ├── Exception/
-│       └── Services/
-├── docker/
-│   ├── frankenphp/            # FrankenPHP + Caddy
-│   └── php/                   # Extensions
-├── docs/
-│   ├── adr/                   # Architecture Decisions
-│   └── guides/                 # How-to guides
-├── tests/
-│   ├── Unit/
-│   ├── Integration/
-│   └── EndToEnd/
-├── Makefile
-├── docker-compose.yml
-└── prompts/                    # AI agent prompts
+src/
+├── Kernel.php              # System core (Symfony MicroKernel)
+├── Shared/                 # Global infrastructure
+│   ├── Exception/
+│   └── Services/
+├── User/                   # Module (Bounded Context)
+│   ├── Entity/
+│   ├── Enums/
+│   ├── ValueObject/
+│   ├── Event/
+│   ├── Services/
+│   ├── Clients/
+│   ├── Repositories/
+│   ├── Exception/
+│   └── Features/           # Vertical Slices (business logic here 👇)
+│       └── RegisterUser/
+│           ├── RegisterUserCommand.php
+│           ├── RegisterUserHandler.php
+│           ├── RegisterUserRequest.php
+│           └── RegisterUserResponse.php
+├── Task/                   # Another module
+├── Board/                  # Another module
+└── Health/                 # Technical feature (same pattern)
 ```
 
 ---
@@ -225,7 +198,7 @@ pragmatic-franken/
 
 ---
 
-## 🤝 Contributing
+## 🫵 Contributing
 
 See [Contributing Guidelines](.github/CONTRIBUTING.md) for details.
 

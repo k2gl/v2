@@ -19,23 +19,27 @@ This project uses structured instructions for AI assistants.
 ### Folder Structure
 
 src/
-├── Shared/                      # Глобальная инфраструктура
+├── Kernel.php              # System core (Symfony MicroKernel)
+├── Shared/                 # Global infrastructure
 │   ├── Exception/
 │   └── Services/
 │
 ├── {Module}/
-│   ├── Entity/                  # Doctrine Entities
+│   ├── Entity/             # Doctrine Entities
 │   ├── Enums/
-│   └── Features/{FeatureName}/  # Vertical Slices Feature
-│       ├── {FeatureName}Command.php      # Command (Write)
-│       ├── {FeatureName}Handler.php      # Handler
-│       ├── {FeatureName}Query.php        # Query (Read, optional)
-│       ├── EntryPoint/                   # Entry points (optional)
-│       │   ├── Http/
-│       │   ├── Cli/
-│       │   └── Queue/
-│       ├── Request/                      # Input validation (optional)
-│       └── Response/                     # Response (optional)
+│   ├── ValueObject/
+│   ├── Event/
+│   ├── Services/
+│   ├── Clients/
+│   ├── Repositories/
+│   ├── Exception/
+│   └── Features/           # Vertical Slices (flat structure)
+│       └── {FeatureName}/
+│           ├── {FeatureName}Command.php     # Command (Write)
+│           ├── {FeatureName}Query.php       # Query (Read, optional)
+│           ├── {FeatureName}Handler.php     # Handler
+│           ├── {FeatureName}Request.php     # Input validation (optional)
+│           └── {FeatureName}Response.php    # Response (optional)
 
 ### Code Rules
 
@@ -112,8 +116,6 @@ $this->eventBus->dispatch(new {FeatureName}Event($data));
 | Handler | `{FeatureName}Handler.php` |
 | EntryPoint HTTP | `{FeatureName}Controller.php` |
 | EntryPoint CLI | `{FeatureName}Console.php` |
-| Request | `{FeatureName}Request.php` |
-| Response | `{FeatureName}Response.php` |
 
 ### Pragmatic Rules
 
@@ -188,7 +190,7 @@ readonly class {FeatureName}Handler
 
 #### EntryPoint (HTTP)
 ```php
-// src/{Module}/Features/{FeatureName}/EntryPoint/Http/{FeatureName}Controller.php
+// src/{Module}/Features/{FeatureName}/{FeatureName}Controller.php
 final class {FeatureName}Controller extends AbstractController
 {
     public function __invoke(

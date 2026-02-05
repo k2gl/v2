@@ -497,7 +497,8 @@ ruleset:
 
 ```
 src/
-├── Shared/              # Truly shared (infrastructure only)
+├── Kernel.php              # System core
+├── Shared/                 # Truly shared (infrastructure only)
 │   ├── Exception/
 │   └── Services/
 ├── User/
@@ -510,19 +511,23 @@ src/
 │   ├── Repositories/
 │   ├── Exception/
 │   └── Features/
-│       └── {FeatureName}/
-│           ├── Input/
-│           ├── Output/
-│           ├── Handler/
-│           ├── Action/
-│           └── Client/
-├── Board/               # Аналогично User
-├── Task/                 # Аналогично User
-└── Health/              # Technical feature
-    ├── Services/
-    └── Features/
-        └── HealthCheck/
+│       └── {FeatureName}/  # Flat structure (no subfolders)
+│           ├── {FeatureName}Command.php
+│           ├── {FeatureName}Query.php
+│           ├── {FeatureName}Handler.php
+│           ├── {FeatureName}Request.php
+│           └── {FeatureName}Response.php
+├── Board/                  # Module (same pattern)
+├── Task/                   # Module (same pattern)
+└── Health/                 # Technical feature (same pattern)
 ```
+
+### Rule: No Empty Directories
+
+Create directories only when files exist. Do not create:
+- Empty Feature directories
+- Empty subdirectories (Input/, Output/, Handler/, etc.)
+- Placeholder directories for "future use"
 
 ### Duplication Budget
 
