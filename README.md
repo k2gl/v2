@@ -4,7 +4,7 @@
 [![FrankenPHP](https://img.shields.io/badge/FrankenPHP-1.x-006b5b?logo=docker&logoColor=white)](https://frankenphp.dev/)
 [![Symfony 7.2](https://img.shields.io/badge/Symfony-7.2-000000?logo=symfony&logoColor=white)](https://symfony.com/)
 [![License MIT](https://img.shields.io/badge/License-MIT-yellowgreen)](https://opensource.org/licenses/MIT)
-[![CI Pipeline](https://img.shields.io/github/actions/workflow/status/k2gl/pragmatic-franken/conventional-commits.yml?branch=main&label=CI)](https://github.com/k2gl/pragmatic-franken/actions)
+[![CI Pipeline](https://img.shields.io/github/actions/workflow/status/k2gl/pragmatic-franken/ci.yml?branch=main&label=CI)](https://github.com/k2gl/pragmatic-franken/actions)
 
 > Symfony project with FrankenPHP, DDD patterns, and Docker infrastructure.
 
@@ -29,7 +29,7 @@
 - Built-in Mercure for real-time updates
 - Prometheus metrics on port 2019
 
-See [Why FrankenPHP?](docs/why-frankenphp.md) for details.
+See [ADR 0005: FrankenPHP Application Server](docs/adr/0005-frankenphp-server.md) for details.
 
 ## 🚀 Quick Start
 
@@ -94,7 +94,10 @@ pragmatic-franken/
 │   ├── frankenphp/            # FrankenPHP config + Caddyfile
 │   ├── php/                   # PHP extensions
 │   └── ...
-├── docs/                       # Architecture decisions and guides
+├── docs/                       # Architecture decisions (ADRs) and guides
+│   ├── adr/                    # Architectural Decision Records
+│   ├── architecture/           # Architecture documentation
+│   └── guides/                 # Development guides
 ├── tests/                      # PHPUnit tests
 ├── .github/
 │   ├── workflows/             # CI/CD pipelines
@@ -165,11 +168,17 @@ Tasks are executed via Symfony Scheduler inside the main FrankenPHP container. P
 
 ## 📚 Documentation
 
-### Architecture
+### Architecture Decisions (ADRs)
 
-- [Why FrankenPHP?](./docs/why-frankenphp.md) — Performance benefits, 103 Early Hints, Mercure integration
-- [Modular Monolith](./docs/why-modular-monolith.md) — Module boundaries and future microservices
-- [Outbox Pattern](./docs/decision-on-outbox.md) — Guaranteed event delivery
+All major architectural decisions are documented as ADRs in [`docs/adr/`](docs/adr/):
+
+- [ADR 0001: Pragmatic Symfony Architecture](docs/adr/0001-pragmatic-symfony-architecture.md) — Core principles and compliance checklist
+- [ADR 0002: Symfony Messenger as Main Bus](docs/adr/0002-messenger-as-main-bus.md) — Command/Query separation
+- [ADR 0003: Transactional Outbox Pattern](docs/adr/0003-transactional-outbox-pattern.md) — Guaranteed event delivery
+- [ADR 0004: Modular Monolith Architecture](docs/adr/0004-modular-monolith-architecture.md) — Module boundaries
+- [ADR 0005: FrankenPHP Application Server](docs/adr/0005-frankenphp-server.md) — Server selection
+
+See [Architecture Overview](docs/ARCHITECTURE.md) for implementation details.
 
 ### Guides
 

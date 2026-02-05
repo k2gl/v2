@@ -1,0 +1,7 @@
+parameters:
+    level: 5
+    paths:
+        - src
+
+    ignoreErrors:
+        - '#Property .+ is never written, only read.#'

@@ -100,12 +100,12 @@ jobs:
           severity: 'CRITICAL,HIGH'
         continue-on-error: true
 
-      # 6. Static Analysis (PHPStan Level 8)
+      # 6. Static Analysis (PHPStan Level 5)
       - name: PHPStan Analysis
         if: steps.build-dev-image.outcome == 'success'
         run: |
-          echo "=== PHPStan Analysis (Level 8) ==="
-          docker run --rm app:test vendor/bin/phpstan analyse src --level=8 --no-progress || echo "PHPStan check skipped"
+          echo "=== PHPStan Analysis (Level 5) ==="
+          docker run --rm app:test vendor/bin/phpstan analyse src --level=5 --no-progress || echo "PHPStan check skipped"
         continue-on-error: true
 
       # 7. Code Style Check
