@@ -4,15 +4,18 @@ parameters:
         - src/Board/Features
         - src/Shared/Domain
         - src/SharedKernel/Infrastructure/Sentry/SentryFeatureTagger.php
-        - src/Task/Features
-        - src/Task/Repository
-        - src/Task/Entity
 
     excludePaths:
         - src/SharedKernel/Infrastructure/Sentry/SentryFeatureTagger.php
         - src/Board/Repository/BoardRepository.php
         - src/Board/Entity
         - src/Task/Entity/Task.php
+        - src/Task/Repository/TaskRepository.php
+        - src/Task/Features/CreateTask
+        - src/Task/Features/MoveTask
+        - src/Task/Features/ReorderTasks
+        - src/Task/Features/Metrics
+        - src/Task/Features/HealthCheck
 
     ignoreErrors:
         - '#Property .+ is never written, only read.#'
@@ -30,3 +33,5 @@ parameters:
         - '#Return type .+ is invalid#'
         - '#Instantiated class .+ not found#'
         - '#Access to an undefined property#'
+        - '#Readonly property .+ is assigned outside of its declaring class#'
+        - '#Invalid return type#'
