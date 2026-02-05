@@ -22,40 +22,7 @@ We use **Symfony Messenger** as the main communication bus implementing CQRS pat
 - **Queries** for read operations (synchronous)
 - **Events** for cross-module communication (asynchronous by default)
 
-## Message Bus Rule (Required)
-
-Actions MUST use `MessageBusInterface` for dispatching messages.
-
-**Required Pattern:**
-```php
-use Symfony\Component\Messenger\MessageBusInterface;
-
-final readonly class CreateTaskAction
-{
-    public function __invoke(
-        #[MapRequestPayload] CreateTaskMessage $message,
-        MessageBusInterface $bus,
-    ): CreateTaskResponse {
-        return $bus->dispatch($message);
-    }
-}
-```
-
-**NOT ALLOWED - Direct Handler Call:**
-```php
-// ❌ WRONG - creates tight coupling
-final readonly class CreateTaskAction
-{
-    public function __invoke(
-        #[MapRequestPayload] CreateTaskMessage $message,
-        CreateTaskHandler $handler,
-    ): CreateTaskResponse {
-        return $handler->handle($message);
-    }
-}
-```
-
-See [ADR 001: Pragmatic Symfony Architecture](adr-001-pragmatic-symfony-architecture.md) for full compliance requirements.
+See [ADR 001: Pragmatic Symfony Architecture](adr-001-pragmatic-symfony-architecture.md) for the Message Bus Rule and compliance requirements.
 
 ## Command-Query Responsibility Segregation
 

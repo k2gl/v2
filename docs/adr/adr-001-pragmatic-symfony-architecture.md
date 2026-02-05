@@ -27,7 +27,7 @@ Instead of introducing custom structures or complex patterns (e.g., Hexagonal Ar
 
 - **Don't create interfaces** for services unless multiple implementations are expected
 - **Don't use DTOs** where form validation or entities are sufficient
-- Standard chain: Controller → Service → Entity
+- Standard chain: Controller → Message Bus → Handler → Entity
 
 ### 3. Symfony Flex & Autowiring
 
@@ -52,6 +52,33 @@ For maximum development speed and clarity, we abandon separate validation and AP
 ### 7. Native Symfony Mapping
 
 We use built-in Symfony tools (Serializers or `#[MapRequestPayload]`) for automatic JSON-to-DTO conversion with validation.
+
+### 8. Message Bus Pattern (Preferred)
+
+**Symfony Messenger** is the preferred way to dispatch commands and queries. This provides:
+- Loose coupling between UI and business logic
+- Easy async processing via transports
+- Audit trail via messages
+- Testability of handlers in isolation
+
+**Preferred Pattern:**
+```php
+use Symfony\Component\Messenger\MessageBusInterface;
+
+final readonly class CreateTaskAction
+{
+    public function __invoke(
+        #[MapRequestPayload] CreateTaskMessage $message,
+        MessageBusInterface $bus,
+    ): TaskResponse {
+        return $bus->dispatch($message);
+    }
+}
+```
+
+See [ADR 004: Messenger Transport](adr-004-messenger-transport.md) for implementation details.
+
+**Acceptable Alternative:** Direct service calls are still allowed for simple CRUD (see Appendix B).
 
 ## Consequences
 
@@ -117,9 +144,70 @@ final readonly class CreateUserRequest
 }
 ```
 
-### Example: Slim Controller
+### Example: Slim Controller (Message Bus)
 
 ```php
+declare(strict_types=1);
+
+namespace App\User\UI\Http;
+
+use App\User\Application\Message\CreateUserMessage;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Routing\Attribute\Route;
+
+final readonly class CreateUserAction
+{
+    public function __construct(
+        private MessageBusInterface $bus
+    ) {}
+
+    #[Route('/api/users', methods: ['POST'])]
+    public function __invoke(
+        #[MapRequestPayload] CreateUserMessage $message
+    ): JsonResponse {
+        $response = $this->bus->dispatch($message);
+        return $this->json(['id' => $response->id], 201);
+    }
+}
+```
+
+### Example: Handler
+
+```php
+declare(strict_types=1);
+
+namespace App\User\Application\Handler;
+
+use App\User\Application\Message\CreateUserMessage;
+use App\User\Application\Response\UserResponse;
+use App\User\Infrastructure\UserRepository;
+use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+
+#[AsMessageHandler]
+final readonly class CreateUserHandler
+{
+    public function __construct(
+        private UserRepository $repository
+    ) {}
+
+    public function handle(CreateUserMessage $message): UserResponse
+    {
+        $user = User::register($message->email, $message->username);
+        $this->repository->save($user);
+        return UserResponse::fromEntity($user);
+    }
+}
+```
+
+---
+
+## Appendix B: Direct Service Calls (Acceptable but Not Preferred)
+
+While **Message Bus is preferred** for new features, direct service calls are still acceptable for simple CRUD operations where async processing and loose coupling are not needed.
+
+```php
+// Acceptable for simple CRUD
 declare(strict_types=1);
 
 namespace App\User\UI\Http;
@@ -131,25 +219,28 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final readonly class CreateUserAction
 {
-    public function __construct(
-        private UserService $userService
-    ) {}
+    public function __construct(private UserService $userService) {}
 
     #[Route('/api/users', methods: ['POST'])]
     public function __invoke(
         #[MapRequestPayload] CreateUserRequest $dto
     ): JsonResponse {
         $user = $this->userService->create($dto);
-        
         return $this->json(['id' => $user->getId()], 201);
     }
 }
 ```
 
-### Example: Simple Service
+**When to use direct service calls:**
+- Simple CRUD with no async requirements
+- Legacy code migration (gradual Messenger adoption)
+- Performance-critical paths with minimal logic
 
-```php
-declare(strict_types=1);
+**When to prefer Message Bus:**
+- Multiple handlers needed
+- Async processing required
+- Cross-module communication
+- Audit trail important
 
 namespace App\User\Application\Service;
 
