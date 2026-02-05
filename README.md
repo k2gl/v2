@@ -105,6 +105,8 @@ How we write code:
 
 ## 🛠 ADR: Architecture Decision Records
 
+We don't do "because I said so". Every decision is documented:
+
 | ADR | Topic | Priority |
 |-----|-------|----------|
 | [0001](docs/adr/0001-vertical-slices.md) | Vertical Slices Architecture | P0 |
