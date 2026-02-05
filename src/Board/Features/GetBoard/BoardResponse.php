@@ -61,23 +61,23 @@ final readonly class TaskDTO
         #[OA\Property(description: "Task title")]
         public string $title,
 
-        #[OA\Property(description: "Task description", nullable: true)]
-        public ?string $description = null,
+        #[OA\Property(description: "Position for drag-drop ordering")]
+        public float $position,
 
         #[OA\Property(description: "Task status")]
         public string $status,
 
-        #[OA\Property(description: "Position for drag-drop ordering")]
-        public float $position,
-
-        #[OA\Property(description: "Task metadata (tags, colors, etc.)")]
-        public array $metadata = [],
+        #[OA\Property(description: "Task description", nullable: true)]
+        public ?string $description = null,
 
         #[OA\Property(description: "Assignee user ID", nullable: true)]
         public ?int $assigneeId = null,
 
         #[OA\Property(description: "Due date", nullable: true)]
         public ?string $dueDate = null,
+
+        #[OA\Property(description: "Task metadata (tags, colors, etc.)")]
+        public array $metadata = [],
 
         #[OA\Property(description: "Creation timestamp")]
         public string $createdAt

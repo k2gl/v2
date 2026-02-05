@@ -24,4 +24,9 @@ final readonly class MoveTaskMessage
         )]
         public TaskStatus $newStatus
     ) {}
+
+    public function withTaskId(int $taskId): self
+    {
+        return new self($taskId, $this->newStatus);
+    }
 }

@@ -4,8 +4,6 @@ namespace App\Task\Features\ReorderTasks;
 
 use App\Task\Entity\Task;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\Mercure\HubInterface;
-use Symfony\Component\Mercure\Update;
 
 readonly class ReorderTasksHandler
 {
@@ -14,15 +12,14 @@ readonly class ReorderTasksHandler
     public const INSERT_AT_BOTTOM = 'at_bottom';
 
     public function __construct(
-        private EntityManagerInterface $entityManager,
-        private ?HubInterface $hub = null
+        private EntityManagerInterface $entityManager
     ) {}
 
     public function handle(ReorderTasksMessage $message): ReorderTasksResult
     {
         $connection = $this->entityManager->getConnection();
 
-        $result = match ($message->strategy) {
+        return match ($message->strategy) {
             self::INSERT_BETWEEN => $this->insertBetween(
                 $connection,
                 $message->taskId,
@@ -33,21 +30,6 @@ readonly class ReorderTasksHandler
             self::INSERT_AT_TOP => $this->insertAtTop($connection, $message->taskId, $message->columnId),
             default => $this->updateOrder($connection, $message->orderedIds, $message->columnId),
         };
-
-        if ($this->hub !== null) {
-            $update = new Update(
-                "https://your-kanban.com/board/{$message->columnId}",
-                json_encode([
-                    'event' => 'tasks_reordered',
-                    'columnId' => $message->columnId,
-                    'strategy' => $message->strategy,
-                    'timestamp' => (new \DateTimeImmutable())->format(\DateTimeInterface::ATOM)
-                ])
-            );
-            $this->hub->publish($update);
-        }
-
-        return $result;
     }
 
     private function insertBetween(

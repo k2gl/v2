@@ -1,37 +1,15 @@
 parameters:
     level: 5
     paths:
-        - src/Board/Features
+        - src/Board
         - src/Shared/Domain
-        - src/SharedKernel/Infrastructure/Sentry/SentryFeatureTagger.php
+        - src/SharedKernel/Infrastructure/Sentry
+        - src/Task
 
     excludePaths:
         - src/SharedKernel/Infrastructure/Sentry/SentryFeatureTagger.php
-        - src/Board/Repository/BoardRepository.php
-        - src/Board/Entity
-        - src/Task/Entity/Task.php
-        - src/Task/Repository/TaskRepository.php
-        - src/Task/Features/CreateTask
-        - src/Task/Features/MoveTask
-        - src/Task/Features/ReorderTasks
-        - src/Task/Features/Metrics
-        - src/Task/Features/HealthCheck
+        - src/Shared/Domain/Timestampable.php
 
     ignoreErrors:
-        - '#Property .+ is never written, only read.#'
-        - '#Deprecated in PHP 8\.1: Required parameter .+ follows optional#'
-        - '#Deprecated in PHP 8\.0: Required parameter .+ follows optional#'
-        - '#Trait .+ is used zero times#'
-        - '#Attribute class .+ does not exist#'
-        - '#Class .+ not found#'
-        - '#Method .+ not found#'
-        - '#Function .+ not found#'
-        - '#Interface .+ not found#'
-        - '#Parameter .+ has unknown class#'
-        - '#Property .+ has unknown class#'
-        - '#Call to method .+ on an unknown class#'
-        - '#Return type .+ is invalid#'
-        - '#Instantiated class .+ not found#'
-        - '#Access to an undefined property#'
-        - '#Readonly property .+ is assigned outside of its declaring class#'
-        - '#Invalid return type#'
+        - '/Property .+ is never written, only read./'
+        - '/Deprecated in PHP 8\.(0|1): Required parameter .+ follows optional./'

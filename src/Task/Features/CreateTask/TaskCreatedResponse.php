@@ -37,7 +37,7 @@ final readonly class TaskCreatedResponse
     public static function fromEntity(Task $task): self
     {
         return new self(
-            id: $task->getId() ?? 0,
+            id: $task->getId(),
             uuid: $task->getUuid(),
             title: $task->getTitle(),
             columnId: $task->getColumn()->getId(),

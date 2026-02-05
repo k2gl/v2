@@ -8,7 +8,6 @@ use App\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: "Boards")]
@@ -24,9 +23,10 @@ final class GetBoardAction extends AbstractController
     #[OA\Response(response: 404, description: "Board not found")]
     public function __invoke(
         int $id,
-        #[CurrentUser] User $user,
         BoardRepository $repository
     ): BoardResponse {
+        $user = $this->getUser();
+        assert($user instanceof User);
         $board = $repository->findFullBoard($id, $user);
 
         if (!$board) {
@@ -46,12 +46,12 @@ final class GetBoardAction extends AbstractController
                 $task->getId(),
                 $task->getUuid(),
                 $task->getTitle(),
-                $task->getDescription(),
-                $task->getStatus()->value,
                 (float) $task->getPosition(),
-                $task->getMetadata(),
+                $task->getStatus()->value,
+                $task->getDescription(),
                 $task->getAssignee()?->getId(),
                 $task->getDueDate()?->format('c'),
+                $task->getMetadata(),
                 $task->getCreatedAt()->format('c')
             ), $column->getTasks()->toArray()),
             $column->getTasks()->count()

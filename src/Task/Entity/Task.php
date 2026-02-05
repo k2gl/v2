@@ -14,7 +14,7 @@ class Task
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
     #[ORM\Column(type: 'uuid', unique: true)]
     private string $uuid;
@@ -36,9 +36,6 @@ class Task
     #[ORM\JoinColumn(name: 'assignee_id')]
     private ?User $assignee = null;
 
-    #[ORM\Column(name: 'assignee_id', nullable: true)]
-    private ?int $assigneeId = null;
-
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'owner_id', nullable: false)]
     private User $owner;
@@ -48,9 +45,6 @@ class Task
 
     #[ORM\Column(type: 'jsonb', options: ['jsonb' => true])]
     private array $metadata = [];
-
-    #[ORM\Column(type: 'integer', options: ['default' => 0])]
-    private int $sortOrder = 0;
 
     #[ORM\Column(name: 'due_date', nullable: true)]
     private ?\DateTimeImmutable $dueDate = null;
@@ -80,7 +74,7 @@ class Task
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
@@ -146,7 +140,6 @@ class Task
     public function setAssignee(?User $assignee): void
     {
         $this->assignee = $assignee;
-        $this->assigneeId = $assignee?->getId();
         $this->updatedAt = new \DateTimeImmutable();
     }
 

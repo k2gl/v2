@@ -52,13 +52,13 @@ class BoardRepository extends ServiceEntityRepository
 
     public function save(Board $board): void
     {
-        $this->_em->persist($board);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($board);
+        $this->getEntityManager()->flush();
     }
 
     public function delete(Board $board): void
     {
-        $this->_em->remove($board);
-        $this->_em->flush();
+        $this->getEntityManager()->remove($board);
+        $this->getEntityManager()->flush();
     }
 }

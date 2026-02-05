@@ -6,7 +6,6 @@ use App\User\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(name: "Boards")]
@@ -21,9 +20,10 @@ final class CreateBoardAction extends AbstractController
     #[OA\Response(response: 401, description: "Unauthorized")]
     public function __invoke(
         #[MapRequestPayload] CreateBoardMessage $message,
-        #[CurrentUser] User $user,
         CreateBoardHandler $handler
     ): BoardCreatedResponse {
+        $user = $this->getUser();
+        assert($user instanceof User);
         return $handler->handle($message, $user);
     }
 }

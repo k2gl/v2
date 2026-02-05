@@ -12,7 +12,7 @@ class Column
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    private ?int $id = null;
+    private int $id;
 
     #[ORM\ManyToOne(targetEntity: Board::class, inversedBy: 'columns')]
     #[ORM\JoinColumn(name: 'board_id', nullable: false)]
@@ -43,7 +43,7 @@ class Column
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }

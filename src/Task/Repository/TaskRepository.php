@@ -59,13 +59,13 @@ class TaskRepository extends ServiceEntityRepository
 
     public function save(Task $task): void
     {
-        $this->_em->persist($task);
-        $this->_em->flush();
+        $this->getEntityManager()->persist($task);
+        $this->getEntityManager()->flush();
     }
 
     public function delete(Task $task): void
     {
-        $this->_em->remove($task);
-        $this->_em->flush();
+        $this->getEntityManager()->remove($task);
+        $this->getEntityManager()->flush();
     }
 }

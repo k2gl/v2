@@ -16,7 +16,6 @@ final class MoveTaskAction extends AbstractController
         #[MapRequestPayload] MoveTaskMessage $message,
         MoveTaskHandler $handler
     ): MoveTaskResult {
-        $message->taskId = $id;
-        return $handler->handle($message);
+        return $handler->handle($message->withTaskId($id));
     }
 }
