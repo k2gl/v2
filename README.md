@@ -159,34 +159,38 @@ flowchart TD
 
 ---
 
-## 📁 Project Structure
+## 📁 Architecture: Vertical Slices & Modular Monolith 2.0
+We don't do "folders by type" (all controllers in one place, all models in another). That's 2010. We group by Business Value.
 
 ```
 src/
-├── Kernel.php              # System core (Symfony MicroKernel)
-├── Shared/                 # Global infrastructure
-│   ├── Exception/
-│   └── Services/
-├── User/                   # Module (Bounded Context)
-│   ├── Entity/
-│   ├── Enums/
-│   ├── ValueObject/
-│   ├── Event/
-│   ├── Services/
-│   ├── Clients/
-│   ├── Repositories/
-│   ├── Exception/
-│   └── Features/           # Vertical Slices (business logic here 👇)
-│       └── RegisterUser/
-│           ├── RegisterUserCommand.php
-│           ├── RegisterUserHandler.php
-│           ├── RegisterUserRequest.php
-│           └── RegisterUserResponse.php
-├── Task/                   # Another module
-├── Board/                  # Another module
-└── Health/                 # Technical feature (same pattern)
+├── Shared/            # Global infrastructure & base classes
+│
+├── [Module]/          # Bounded Context (e.g., User, Task, Billing)
+│   ├── Entity/        # Module-specific Domain Models & Enums
+│   ├── Repository/    # Data access interfaces
+│   └── Features/        # Vertical Slices (Real work happens here 👇)
+│       └── {FeatureName}/
+│           ├── {FeatureName}Controller.php     # Entry point (HTTP/CLI)
+│           ├── {FeatureName}Handler.php        # Business logic
+│           ├── {FeatureName}Command.php        # Data transfer (Request/Response)
+│           └── {FeatureName}Test.php           # Local feature test
+│
+└── Kernel.php         # Symfony MicroKernel
 ```
+Why this kicks ass:
+1. Locality of Change: Want to change "User Registration"? Everything is in one folder. No jumping around 10 directories.
+2. Zero Side Effects: Delete a folder — the entire feature is gone. No ghost code left behind.
+3. AI-Friendly: Your AI Agent finds context instantly. It doesn't have to scan the whole src/Controllers folder to find one specific action.
+4. Low Cognitive Load: You focus on the feature, not the framework.
 
+### ⚡️ DX & Scaffolding
+Stop wasting time on boilerplate. Use our generators to keep the architecture clean and consistent:
+
+```bash
+# Create a new Vertical Slice (Action + Handler + DTO + Test)
+make slice module=Billing feature=Subscribe
+```
 ---
 
 ## 📚 Guides

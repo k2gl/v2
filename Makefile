@@ -4,7 +4,7 @@
          lint phpstan cs-fix cs-check format check ci \
          clean metrics docker-stats stats \
          env-create \
-         open-api xdebug-on xdebug-off
+         open-api xdebug-on xdebug-off slice
 
 # Variables (local)
 USER_ID := $(shell id -u)
@@ -199,3 +199,9 @@ xdebug-off: ## Disable Xdebug
 stats: ## 📊 Check FrankenPHP metrics
 	@echo "$(GREEN)Fetching FrankenPHP metrics...$(RESET)"
 	@curl -s http://localhost:2019/metrics | head -20
+
+##—————— 🤖 AI & Development ——————
+slice: ## 🚀 Generate a new feature slice
+	@echo "$(GREEN)Creating slice...$(RESET)"
+	@chmod +x scripts/create-slice.sh
+	@./scripts/create-slice.sh $(module) $(feature)
