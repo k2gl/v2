@@ -86,6 +86,32 @@ make rebuild           # Rebuild without cache
 pragmatic-franken/
 ├── src/
 │   ├── {Module}/
+│   │   ├── Entity/             # Doctrine Entities
+│   │   ├── Enums/
+│   │   └── UseCase/{FeatureName}/   # Feature Slice
+│   │       ├── {FeatureName}Command.php
+│   │       ├── {FeatureName}Handler.php
+│   │       ├── EntryPoint/Http/{FeatureName}Controller.php
+│   │       ├── Request/
+│   │       └── Response/
+│   └── Shared/                 # Cross-cutting concerns
+│       ├── Exception/
+│       └── Services/
+├── config/              # Symfony configuration
+├── docs/
+│   ├── adr/             # Architectural Decision Records
+│   └── guides/         # How-to guides
+├── tests/
+│   ├── Unit/           # Handler tests
+│   ├── Integration/    # Persistence tests
+│   └── EndToEnd/       # Controller tests
+├── docker/
+├── Makefile
+└── composer.json
+```
+pragmatic-franken/
+├── src/
+│   ├── {Module}/
 │   │   ├── Domain/       # Entities, Value Objects, Events
 │   │   ├── Application/  # Commands, Queries, Handlers
 │   │   ├── Infrastructure/ # Doctrine, External Services
@@ -110,105 +136,121 @@ pragmatic-franken/
 
 ## Creating a New Feature
 
-### Step 1: Create Module Structure
+### Step 1: Create UseCase Structure
 
 ```bash
-# Create module directories
-mkdir -p src/Task/{Domain,Application/{Command,Query,Handler},Infrastructure,UI}
+# Create UseCase directories
+mkdir -p src/Task/UseCase/CreateTask/{EntryPoint/Http,Request,Response}
 ```
 
-### Step 2: Define Domain Entity
+### Step 2: Define Command
 
 ```php
-// src/Task/Domain/Task.php
+// src/Task/UseCase/CreateTask/CreateTaskCommand.php
 declare(strict_types=1);
 
-namespace App\Task\Domain;
-
-use App\Shared\Domain\AbstractAggregateRoot;
-use App\Task\Domain\Event\TaskCreatedEvent;
-
-final class Task extends AbstractAggregateRoot
-{
-    public function __construct(
-        public readonly int $id,
-        private string $title,
-        private TaskStatus $status = TaskStatus::TODO
-    ) {
-        $this->recordEvent(new TaskCreatedEvent($this->id, $this->title));
-    }
-    
-    public function complete(): void
-    {
-        $this->status = TaskStatus::DONE;
-    }
-}
-```
-
-### Step 3: Create Command
-
-```php
-// src/Task/Application/Command/CreateTaskCommand.php
-declare(strict_types=1);
-
-namespace App\Task\Application\Command;
+namespace App\Task\UseCase\CreateTask;
 
 final readonly class CreateTaskCommand
 {
     public function __construct(
-        public string $title
+        public string $title,
+        public int $columnId,
+        public ?string $description = null,
     ) {}
 }
 ```
 
-### Step 4: Create Handler
+### Step 3: Create Handler
 
 ```php
-// src/Task/Application/Handler/CreateTaskHandler.php
+// src/Task/UseCase/CreateTask/CreateTaskHandler.php
 declare(strict_types=1);
 
-namespace App\Task\Application\Handler;
+namespace App\Task\UseCase\CreateTask;
 
-use App\Task\Application\Command\CreateTaskCommand;
-use App\Task\Application\Dto\TaskResponse;
-use App\Task\Infrastructure\TaskRepository;
+use App\Task\Entity\Task;
+use App\Task\UseCase\CreateTask\Request\CreateTaskRequest;
+use App\Task\UseCase\CreateTask\Response\CreateTaskResponse;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
 final readonly class CreateTaskHandler
 {
-    public function __construct(private TaskRepository $repository) {}
+    public function __construct(
+        private EntityManagerInterface $em,
+    ) {}
 
-    public function handle(CreateTaskCommand $command): TaskResponse
+    public function handle(CreateTaskCommand $command): CreateTaskResponse
     {
-        $task = new Task($command->title);
-        $this->repository->save($task);
-        
-        return TaskResponse::fromEntity($task);
+        $task = new Task($command->title, $command->columnId);
+        $this->em->persist($task);
+        $this->em->flush();
+
+        return CreateTaskResponse::fromEntity($task);
     }
+}
+```
+
+### Step 4: Create Request DTO with Validation
+
+```php
+// src/Task/UseCase/CreateTask/Request/CreateTaskRequest.php
+declare(strict_types=1);
+
+namespace App\Task\UseCase\CreateTask\Request;
+
+use Symfony\Component\Validator\Constraints as Assert;
+use OpenApi\Attributes as OA;
+
+#[OA\Schema(description: "Create task request")]
+final readonly class CreateTaskRequest
+{
+    public function __construct(
+        #[Assert\NotBlank]
+        #[Assert\Length(min: 3, max: 255)]
+        #[OA\Property(example: "Fix login bug")]
+        public string $title,
+
+        #[Assert\Positive]
+        #[OA\Property(example: 1)]
+        public int $columnId,
+
+        #[Assert\Length(max: 5000)]
+        #[OA\Property(nullable: true)]
+        public ?string $description = null,
+    ) {}
 }
 ```
 
 ### Step 5: Create Controller
 
 ```php
-// src/Task/UI/Http/CreateTaskAction.php
+// src/Task/UseCase/CreateTask/EntryPoint/Http/CreateTaskController.php
 declare(strict_types=1);
 
-namespace App\Task\UI\Http;
+namespace App\Task\UseCase\CreateTask\EntryPoint\Http;
 
-use App\Task\Application\Command\CreateTaskCommand;
-use App\Task\Application\Dto\TaskResponse;
+use App\Task\UseCase\CreateTask\CreateTaskCommand;
+use App\Task\UseCase\CreateTask\Request\CreateTaskRequest;
+use App\Task\UseCase\CreateTask\Response\CreateTaskResponse;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
-final class CreateTaskAction
+final class CreateTaskController
 {
     #[Route('/api/tasks', methods: ['POST'])]
     public function __invoke(
-        #[MapRequestPayload] CreateTaskCommand $command
-    ): TaskResponse {
-        return $this->dispatch($command);
+        #[MapRequestPayload] CreateTaskRequest $request,
+        MessageBusInterface $bus,
+    ): CreateTaskResponse {
+        $command = new CreateTaskCommand(
+            $request->title,
+            $request->columnId,
+            $request->description,
+        );
+        return $bus->dispatch($command);
     }
 }
 ```
@@ -216,32 +258,25 @@ final class CreateTaskAction
 ### Step 6: Write Tests
 
 ```php
-// tests/Unit/Task/Domain/TaskTest.php
+// tests/Unit/Task/UseCase/CreateTask/CreateTaskHandlerTest.php
 declare(strict_types=1);
 
-namespace App\Tests\Unit\Task\Domain;
+namespace App\Tests\Unit\Task\UseCase\CreateTask;
 
-use App\Task\Domain\Task;
-use App\Task\Domain\Event\TaskCreatedEvent;
+use App\Task\UseCase\CreateTask\CreateTaskHandler;
+use App\Task\UseCase\CreateTask\CreateTaskCommand;
 use PHPUnit\Framework\TestCase;
 
-final class TaskTest extends TestCase
+final class CreateTaskHandlerTest extends TestCase
 {
-    public function test_creates_task_with_title(): void
+    public function test_creates_task(): void
     {
-        $task = new Task(1, 'Test Task');
-        
-        self::assertSame('Test Task', $task->title);
-        self::assertSame(TaskStatus::TODO, $task->status);
-    }
-    
-    public function test_records_domain_event(): void
-    {
-        $task = new Task(1, 'Test Task');
-        $events = $task->releaseEvents();
-        
-        self::assertCount(1, $events);
-        self::assertInstanceOf(TaskCreatedEvent::class, $events[0]);
+        $handler = new CreateTaskHandler($this->em);
+        $command = new CreateTaskCommand('Test Task', 1);
+
+        $response = $handler->handle($command);
+
+        self::assertNotNull($response->id);
     }
 }
 ```

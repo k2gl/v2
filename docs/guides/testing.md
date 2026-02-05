@@ -23,51 +23,60 @@ This project follows a layered testing strategy matching the application archite
 
 ```
 tests/
-├── Unit/                    # Domain logic tests
+├── Unit/                              # Handler tests (isolated)
 │   └── {Module}/
-│       └── Domain/
-│           └── Entity/
-│               └── {Entity}Test.php
-├── Integration/             # Handler and persistence tests
+│       └── UseCase/
+│           └── {FeatureName}/
+│               └── {FeatureName}HandlerTest.php
+├── Integration/                       # Handler + persistence tests
 │   └── {Module}/
-│       └── Application/
-│           └── Handler/
-│               └── {Handler}Test.php
-└── UI/                     # Controller and E2E tests
-    ├── Http/
-    │   └── {Controller}Test.php
-    └── Cli/
-        └── {Command}Test.php
+│       └── UseCase/
+│           └── {FeatureName}/
+│               └── {FeatureName}HandlerTest.php
+└── EndToEnd/                          # Controller tests
+    └── {Module}/
+        └── UseCase/
+            └── {FeatureName}/
+                └── {FeatureName}ControllerTest.php
 ```
 
-## 1. Unit Tests (Domain Layer)
+## 1. Unit Tests (Handler Layer)
 
-**Purpose:** Test business logic in isolation
+**Purpose:** Test handlers in isolation with mocked dependencies
 
-**Scope:** Single class, no external dependencies
+**Scope:** Single handler, mocked repositories
 
-**Tools:** PHPUnit, Prophecy (mocking)
+**Tools:** PHPUnit, mock libraries
 
-### Entity Testing
+### Handler Testing
 
 ```php
 declare(strict_types=1);
 
-namespace App\Tests\Unit\User\Domain;
+namespace App\Tests\Unit\User\UseCase\Login;
 
-use App\User\Domain\User;
-use App\User\Domain\Event\UserRegisteredEvent;
+use App\User\UseCase\Login\LoginHandler;
+use App\User\UseCase\Login\LoginCommand;
+use App\User\UseCase\Login\LoginResponse;
 use PHPUnit\Framework\TestCase;
 
-final class UserTest extends TestCase
+final class LoginHandlerTest extends TestCase
 {
-    public function test_creates_user_with_pending_status(): void
+    public function test_returns_token_on_valid_credentials(): void
     {
-        $user = new User(1, 'test@example.com', 'John Doe');
-        
-        self::assertSame('test@example.com', $user->email);
-        self::assertSame(UserStatus::PENDING, $user->status);
+        // Arrange
+        $handler = new LoginHandler($this->createMock(UserRepository::class));
+        $command = new LoginCommand('user@example.com', 'password123');
+
+        // Act
+        $response = $handler->handle($command);
+
+        // Assert
+        self::assertInstanceOf(LoginResponse::class, $response);
+        self::assertNotEmpty($response->token);
     }
+}
+```
     
     public function test_activates_user_successfully(): void
     {

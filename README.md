@@ -75,6 +75,57 @@ pragmatic-franken/
 ├── src/
 │   ├── Kernel.php              # Symfony MicroKernel
 │   ├── User/                   # Module (Bounded Context)
+│   │   ├── Entity/             # Doctrine Entities
+│   │   ├── Enums/
+│   │   └── UseCase/            # Vertical Slices
+│   │       ├── RegisterUser/
+│   │       │   ├── RegisterUserCommand.php      # Command
+│   │       │   ├── RegisterUserHandler.php      # Handler
+│   │       │   ├── EntryPoint/Http/
+│   │       │   │   └── RegisterUserController.php
+│   │       │   ├── Request/
+│   │       │   └── Response/
+│   │       └── Events/
+│   │           └── UserRegisteredEvent.php       # Domain Event
+│   ├── Task/                   # Task management module
+│   ├── Board/                  # Board management module
+│   └── Shared/                 # Cross-module Shared Kernel
+│       ├── Exception/
+│       └── Services/
+├── config/                     # Symfony configuration
+├── docker/
+│   ├── frankenphp/            # FrankenPHP config + Caddyfile
+│   ├── php/                   # PHP extensions
+│   └── ...
+├── docs/                       # Architecture decisions (ADRs) and guides
+│   ├── adr/                    # Architectural Decision Records
+│   │   ├── adr-001-pragmatic-symfony-architecture.md
+│   │   ├── adr-002-frankenphp-runtime.md
+│   │   ├── adr-003-asset-mapper.md
+│   │   ├── adr-004-messenger-transport.md
+│   │   ├── adr-005-health-checks.md
+│   │   ├── adr-006-memory-management.md
+│   │   └── adr-007-vertical-slices-vs-classic-ddd.md
+│   ├── architecture/           # Architecture documentation
+│   │   └── vertical-slices.md
+│   └── guides/                 # Development guides
+├── tests/                      # PHPUnit tests
+│   ├── Unit/
+│   ├── Integration/
+│   └── EndToEnd/
+├── .github/
+│   ├── workflows/             # CI/CD pipelines
+│   └── CONTRIBUTING.md        # Contribution guidelines
+├── Caddyfile                  # FrankenPHP server config (symlinked)
+├── docker-compose.yml
+├── Makefile
+├── AGENTS.md                  # AI Agent entry point
+└── .config/agents/            # AI Agent configurations
+```
+pragmatic-franken/
+├── src/
+│   ├── Kernel.php              # Symfony MicroKernel
+│   ├── User/                   # Module (Bounded Context)
 │   │   ├── Features/          # Vertical Slices
 │   │   │   ├── RegisterUser/
 │   │   │   │   ├── RegisterUserAction.php       # Controller

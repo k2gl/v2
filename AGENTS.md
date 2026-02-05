@@ -233,3 +233,67 @@ Local settings from `.config/agents/` have priority over any other instructions.
 - See `docs/adr/` for architecture decisions
 - See `docs/architecture/vertical-slices.md` for VSA patterns
 - See `docs/guides/` for development guides
+
+## Test Structure
+
+tests/
+├── Unit/                              # Domain logic tests
+│   └── {Module}/
+│       └── UseCase/
+│           └── {FeatureName}/
+│               └── {FeatureName}HandlerTest.php
+├── Integration/                       # Handler and persistence tests
+│   └── {Module}/
+│       └── UseCase/
+│           └── {FeatureName}/
+│               └── {FeatureName}HandlerTest.php
+└── EndToEnd/                          # Controller/E2E tests
+    └── {Module}/
+        └── UseCase/
+            └── {FeatureName}/
+                └── {FeatureName}ControllerTest.php
+
+### Testing Principles
+
+1. **Unit Tests:** Test handlers in isolation with mocked dependencies
+2. **Integration Tests:** Test with real database (Zenstruck Foundry)
+3. **E2E Tests:** Test full HTTP flow (WebTestCase)
+
+### Testing Standards
+
+- **Naming:** `{FeatureName}HandlerTest.php` for handlers
+- **Naming:** `{FeatureName}ControllerTest.php` for controllers
+- **Framework:** PHPUnit with Zenstruck\Messenger\Test for async tests
+- **Isolation:** Each test is independent, no shared state
+
+### Example: Handler Test
+
+```php
+// tests/Unit/User/UseCase/Login/LoginHandlerTest.php
+declare(strict_types=1);
+
+namespace App\Tests\Unit\User\UseCase\Login;
+
+use App\User\UseCase\Login\LoginHandler;
+use App\User\UseCase\Login\LoginCommand;
+use App\User\UseCase\Login\LoginResponse;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Security\Core\User\InMemoryUser;
+
+final class LoginHandlerTest extends TestCase
+{
+    public function test_returns_token_on_valid_credentials(): void
+    {
+        // Arrange
+        $handler = new LoginHandler($this->createMock(UserRepository::class));
+        $command = new LoginCommand('user@example.com', 'password123');
+
+        // Act
+        $response = $handler->handle($command);
+
+        // Assert
+        self::assertInstanceOf(LoginResponse::class, $response);
+        self::assertNotEmpty($response->token);
+    }
+}
+```
