@@ -103,7 +103,7 @@ See [ADR 004: Messenger Transport](adr-004-messenger-transport.md) for implement
 ## Comparison
 
 | Characteristic | Pure / Hexagonal (DDD) | Pragmatic Symfony |
-|-----------------|--------------------------|------------------|
+|----------------|--------------------------|-------------------|
 | **Code** | Framework-independent business logic | Uses Symfony capabilities directly |
 | **Complexity** | Many classes: ports, adapters, mappers | Minimal class count |
 | **Speed** | Slow start, high feature cost | Maximum speed (Flex, autowiring) |
@@ -202,6 +202,42 @@ final readonly class CreateUserHandler
 
 ---
 
+## Appendix A: ADR 001 Compliance Checklist
+
+### 1. Structure and Layers
+
+- [ ] **Message Bus Preferred**: Does the action use `MessageBusInterface` for new features?
+- [ ] **No unnecessary interfaces**: Does the service have an interface? If only one implementation exists, remove the interface.
+- [ ] **Call chain consistency**: Does the logic follow Controller → Message Bus → Handler → Entity?
+- [ ] **Slim Controller**: Does the controller only dispatch messages and return responses?
+
+### 2. DTOs and Data Handling
+
+- [ ] **Attributes over configs**: Are validation (`#[Assert]`) and API docs (`#[OA]`) inside DTOs? No duplicate YAML/XML configs?
+- [ ] **Native Symfony mapping**: Is `#[MapRequestPayload]` or `MapQueryString` used? If manual mapping exists (foreach, etc.), refactor.
+- [ ] **Readonly properties**: Are `public readonly` properties used in DTOs?
+
+### 3. Symfony Power
+
+- [ ] **Autowiring**: Are services injected via constructor automatically?
+- [ ] **Attributes over annotations**: Are modern PHP 8 attributes (`#[Route]`) used?
+
+### 4. Testing
+
+- [ ] **Test balance**: For CRUD features, is there at least one functional test (WebTestCase)?
+
+### Quick Reference
+
+| Check | Question |
+|-------|-----------|
+| Message Bus | Does action use `MessageBusInterface`? |
+| Interface needed? | Does this service have multiple implementations? |
+| DTO correct? | Are `#[Assert]` and `#[OA]` in the same file? |
+| Controller slim? | Does it only call `$bus->dispatch()`? |
+| Tests exist? | At least one WebTestCase per feature? |
+
+---
+
 ## Appendix B: Direct Service Calls (Acceptable but Not Preferred)
 
 While **Message Bus is preferred** for new features, direct service calls are still acceptable for simple CRUD operations where async processing and loose coupling are not needed.
@@ -241,130 +277,3 @@ final readonly class CreateUserAction
 - Async processing required
 - Cross-module communication
 - Audit trail important
-
-namespace App\User\Application\Service;
-
-use App\User\Application\Dto\CreateUserRequest;
-use App\User\Application\Dto\UserResponse;
-use App\User\Infrastructure\UserRepository;
-
-final readonly class UserService
-{
-    public function __construct(
-        private UserRepository $repository
-    ) {}
-
-    public function create(CreateUserRequest $dto): UserResponse
-    {
-        $user = User::register($dto->email, $dto->username);
-        $this->repository->save($user);
-        
-        return UserResponse::fromEntity($user);
-    }
-}
-```
-
-### Message Bus Rule
-
-Actions MUST use Message Bus pattern, not direct handler calls.
-
-**Required Pattern:**
-```php
-use Symfony\Component\Messenger\MessageBusInterface;
-
-final readonly class CreateTaskAction
-{
-    public function __invoke(
-        #[MapRequestPayload] CreateTaskMessage $message,
-        MessageBusInterface $bus,
-    ): CreateTaskResponse {
-        return $bus->dispatch($message);
-    }
-}
-```
-
-**NOT ALLOWED - Direct Handler Call:**
-```php
-// ❌ WRONG - creates tight coupling
-final readonly class CreateTaskAction
-{
-    public function __invoke(
-        #[MapRequestPayload] CreateTaskMessage $message,
-        CreateTaskHandler $handler,
-    ): CreateTaskResponse {
-        return $handler->handle($message);
-    }
-}
-```
-
-### Modular Architecture
-
-Modules follow Vertical Slice pattern with clear boundaries:
-
-```
-src/
-├── [ModuleName]/                    # Bounded Context
-│   ├── Features/
-│   │   └── [FeatureName]/
-│   │       ├── [FeatureName]Action.php      # Uses Message Bus
-│   │       ├── [FeatureName]Message.php    # extends Message
-│   │       ├── [FeatureName]Handler.php     # #[AsMessageHandler]
-│   │       └── [FeatureName]Response.php    # readonly
-│   ├── Entity/
-│   ├── Repository/
-│   └── ValueObject/
-└── Shared/
-    ├── Exception/
-    └── Interface/
-```
-
-**Rules:**
-- Modules may import from other modules (light coupling)
-- Shared layer contains only truly cross-cutting concerns
-- Actions MUST use Message Bus (not direct handler calls)
-
-## Compliance
-
-This ADR is followed when:
-
-1. **Controllers are slim** - Only dispatch requests via Message Bus
-2. **No unnecessary interfaces** - Created only when multiple implementations exist
-3. **Attributes in DTOs** - Validation and OpenAPI documentation in same file
-4. **Native Symfony mapping** - `#[MapRequestPayload]` for automatic deserialization
-5. **Functional tests exist** - At least one WebTestCase per feature
-
----
-
-## Appendix A: ADR 001 Compliance Checklist
-
-### 1. Structure and Layers
-
-- [ ] **Message Bus Required**: Does the action use `MessageBusInterface`? Direct handler calls are NOT allowed.
-- [ ] **No unnecessary interfaces**: Does the service have an interface? If only one implementation exists, remove the interface.
-- [ ] **Call chain consistency**: Does the logic follow Controller → Message Bus → Handler → Entity?
-- [ ] **Slim Controller**: Does the controller only dispatch messages and return responses?
-
-### 2. DTOs and Data Handling
-
-- [ ] **Attributes over configs**: Are validation (`#[Assert]`) and API docs (`#[OA]`) inside DTOs? No duplicate YAML/XML configs?
-- [ ] **Native Symfony mapping**: Is `#[MapRequestPayload]` or `MapQueryString` used? If manual mapping exists (foreach, etc.), refactor.
-- [ ] **Readonly properties**: Are `public readonly` properties used in DTOs?
-
-### 3. Symfony Power
-
-- [ ] **Autowiring**: Are services injected via constructor automatically?
-- [ ] **Attributes over annotations**: Are modern PHP 8 attributes (`#[Route]`) used?
-
-### 4. Testing
-
-- [ ] **Test balance**: For CRUD features, is there at least one functional test (WebTestCase)?
-
-### Quick Reference
-
-| Check | Question |
-|-------|-----------|
-| Message Bus | Does action use `MessageBusInterface`? |
-| Interface needed? | Does this service have multiple implementations? |
-| DTO correct? | Are `#[Assert]` and `#[OA]` in the same file? |
-| Controller slim? | Does it only call `$bus->dispatch()`? |
-| Tests exist? | At least one WebTestCase per feature? |
