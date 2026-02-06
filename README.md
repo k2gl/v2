@@ -1,21 +1,18 @@
 # 🧑‍💻 Pragmatic Franken
-
 > **"Stop refactoring. Start delivering. Here the PHP Cheat Code for 2026"**
-> Build robust, high-performance Modular Monoliths while your AI Agent does the heavy lifting.
 
+[![License MIT](https://img.shields.io/badge/License-MIT-yellowgreen)](https://opensource.org/licenses/MIT)
 [![PHP 8.5](https://img.shields.io/badge/PHP-8.4-777bb4?logo=php&logoColor=white)](https://www.php.net/releases/8.5/)
 [![FrankenPHP 1.x](https://img.shields.io/badge/FrankenPHP-1.x-006b5b?logo=docker&logoColor=white)](https://frankenphp.dev/)
 [![Symfony 8.0](https://img.shields.io/badge/Symfony-8.0-000000?logo=symfony&logoColor=white)](https://symfony.com/)
-[![License MIT](https://img.shields.io/badge/License-MIT-yellowgreen)](https://opensource.org/licenses/MIT)
-[![CI Pipeline](https://img.shields.io/github/actions/workflow/status/k2gl/pragmatic-franken/ci.yml?branch=main&label=CI)](https://github.com/k2gl/pragmatic-franken/actions)
 [![PHPStan Level 9](https://img.shields.io/badge/PHPStan-Level%209-cyan)](https://phpstan.org)
+[![CI Pipeline](https://img.shields.io/github/actions/workflow/status/k2gl/pragmatic-franken/ci.yml?branch=main&label=CI)](https://github.com/k2gl/pragmatic-franken/actions)
 [![AI-Ready](https://img.shields.io/badge/AI--Ready-gold)](#)
 
 ---
 
 ## 🛸 Why Pragmatic Franken?
-
-> **Stop refactoring. Start delivering.**
+Build robust, high-performance Modular Monoliths while your AI Agent does the heavy lifting.
 
 | Problem | Solution |
 |---------|----------|
@@ -24,33 +21,6 @@
 | AI generates spaghetti code | **AI-Native structure** — agents understand context instantly |
 | Code review debates | **Pint + PHPStan Level 9** — tools decide, humans review logic |
 | Fear of deletion | **Rule of Deletion** — optimized for removal, not reuse |
-
----
-
-## ⚡️ Zero Infrastructure Pain
-
-| Feature | Traditional | Pragmatic Franken |
-|---------|------------|-------------------|
-| Web Server | Nginx + FPM | **FrankenPHP** (single binary) |
-| Latency | ~50-100ms | **~2ms** (Kernel stays in memory) |
-| HTTP Protocol | HTTP/1.1 | **HTTP/3** (built-in) |
-| Configuration | 5 config files | **One Caddyfile** |
-
----
-
-## 🦸 AI-First DX
-
-This repo is **Agent-Native**. Cursor, Windsurf, and Copilot understand your architecture better than you do.
-
-```bash
-@AGENTS.md Implement a new 'Subscription' module following our architecture.
-```
-
-The AI Agent will:
-1. **Analyze ADRs** — Reads architecture decisions for consistency
-2. **Scaffold & Code** — Creates folders per Vertical Slice patterns
-3. **Verify** — Runs `make check` to ensure nothing is broken
-4. **Deliver** — Prepares a PR, ready for your review
 
 ---
 
@@ -68,33 +38,21 @@ make install
 
 ---
 
-## 🛠 Build Your First Feature
+## 🦸 AI-First DX (Killer Feature!)
+
+This repo is **Agent-Native**. Cursor, Windsurf, and Copilot understand your architecture better than you do.
 
 ```bash
-# Generate a complete feature slice
-make slice module=User feature=Login
+@AGENTS.md Implement a new 'Subscription' module following our architecture.
 ```
 
-This creates:
-```
-src/User/Features/Login/
-├── LoginAction.php      # HTTP entry point
-├── LoginHandler.php     # Business logic
-├── LoginDto.php         # Data contract
-└── LoginHandlerTest.php # Feature test
-```
+The AI Agent will:
+1. **Analyze ADRs** — Reads architecture decisions for consistency
+2. **Scaffold & Code** — Creates folders per Vertical Slice patterns
+3. **Verify** — Runs `make check` to ensure nothing is broken
+4. **Deliver** — Prepares a PR, ready for your review
 
----
-
-## 📐 Architecture Decision Records
-
-| ADR | Topic | Priority |
-|-----|-------|----------|
-| [0001](docs/adr/0001-vertical-slices.md) | Vertical Slices Architecture | P0 |
-| [0002](docs/adr/0002-messenger-transport.md) | Messenger Transport (CQRS) | P0 |
-| [0003](docs/adr/0003-pragmatic-symfony-architecture.md) | Pragmatic Symfony | P0 |
-| [0008](docs/adr/0008-testing-strategy.md) | Testing Strategy (PHPUnit) | P1 |
-| [0009](docs/adr/0009-shared-architecture.md) | Shared Architecture | P1 |
+**First Feature:** Try implementing real business logic (Telegram auth, Stripe integration) using `@AGENTS.md`. You'll be amazed how simple it became.
 
 ---
 
@@ -107,67 +65,16 @@ src/User/Features/Login/
 | Tests | **PHPUnit** | `make test` |
 | All Checks | **CI Pipeline** | `make check` |
 
-> **Rule:** Do not push code that breaks CI.
-
 ---
 
-## 📁 Project Structure
+## 🌐 Zero Infrastructure Pain
 
-```
-src/
-├── Kernel.php              # Symfony MicroKernel
-├── Shared/                 # Global infrastructure
-│   ├── Infrastructure/    # Bus, Persistence, Logging
-│   └── Domain/            # ValueObjects, Exceptions
-├── User/                   # Module
-│   ├── Entity/           # User.php
-│   ├── Enum/             # UserRole.php
-│   └── Features/          # Vertical Slices
-│       └── Login/
-│           ├── LoginAction.php
-│           ├── LoginHandler.php
-│           ├── LoginDto.php
-│           └── LoginHandlerTest.php
-└── ...
-```
-
-> **See [ADR-0001](docs/adr/0001-vertical-slices.md) for complete architecture rules.**
-
----
-
-## 🎯 The Manifesto
-
-> **"We optimize for Deletion, not for Reusability."**
-
-Vertical Slices mean:
-- **Features are isolated** — change one, break nothing else
-- **Tests live with code** — delete folder = delete feature + tests
-- **Duplication is OK** — 2 copies are cheaper than wrong abstraction
-
----
-
-## 🚀 Roadmap 2026
-
-| Quarter | Focus | What's Coming |
-|---------|-------|---------------|
-| **Q1** | Real-time & Connectivity | Mercure Hub, Event Sourcing Lite, TypeScript SDK Generator |
-| **Q2** | AI & Agentic Autonomy | Self-Healing CI, Interactive Scaffolding, Context Injection |
-| **Q3** | Edge & Performance | Static Binary Builds, Memory Management, SQLite + Litestream |
-| **Q4** | Frontend & Ecosystem | HTMX/LiveWire Presets, Public Templates Marketplace |
-
-[See full Roadmap →](docs/ROADMAP.md)
-
----
-
-## 🛠 What to Do Next?
-
-1. **Self-Check:** Run `make slice module=Demo feature=Success` — if files are created, your machine is ready.
-2. **Push It:** Deploy to public repo and share.
-3. **First Feature:** Try implementing real business logic (Telegram auth, Stripe integration) using `@AGENTS.md`. You'll be amazed how simple it became.
-
----
-
-**"Stop refactoring. Start delivering."**
+| Feature | Traditional | Pragmatic Franken |
+|---------|------------|-------------------|
+| Web Server | Nginx + FPM | **FrankenPHP** (single binary) |
+| Latency | ~50-100ms | **~2ms** (Kernel stays in memory) |
+| HTTP Protocol | HTTP/1.1 | **HTTP/3** (built-in) |
+| Configuration | 5 config files | **One Caddyfile** |
 
 ---
 
@@ -209,6 +116,23 @@ FrankenPHP Worker Mode vs PHP-FPM benchmarks:
 
 ---
 
+## 𓂃✍︎ Architecture Decision Records
+We don't do "because I said so". Every decision is documented:
+
+| ADR | Topic | Priority |
+|-----|-------|----------|
+| [0001](docs/adr/0001-vertical-slices.md) | Vertical Slices Architecture | P0 |
+| [0002](docs/adr/0002-messenger-transport.md) | Messenger Transport (CQRS) | P0 |
+| [0003](docs/adr/0003-pragmatic-symfony-architecture.md) | Pragmatic Symfony | P0 |
+| [0004](docs/adr/0004-frankenphp-runtime.md) | FrankenPHP Runtime | P1 |
+| [0005](docs/adr/0005-health-checks.md) | Health Checks | P1 |
+| [0006](docs/adr/0006-memory-management.md) | Memory Management | P2 |
+| [0007](docs/adr/0007-asset-mapper.md) | AssetMapper | P2 |
+| [0008](docs/adr/0008-testing-strategy.md) | Testing Strategy (PHPUnit) | P1 |
+| [0009](docs/adr/0009-shared-architecture.md) | Shared Architecture | P1 |
+
+---
+
 ## 🐘 Worker Mode Rules
 
 | Rule | Bad | Good |
@@ -217,33 +141,6 @@ FrankenPHP Worker Mode vs PHP-FPM benchmarks:
 | Stateless entities | Entity with static state | Pure entities |
 | Clean shutdown | Implicit memory leaks | `register_shutdown_function()` |
 | Avoid singletons | `Singleton::getInstance()` | Dependency Injection |
-
----
-
-## 🔄 Deep Dive
-
-```mermaid
-flowchart TD
-    A[HTTP Request] --> B[Controller / EntryPoint]
-    B --> C[Command / Query]
-    C --> D[Handler]
-    D --> E[Entity / Domain]
-    D --> F[Repository]
-    E --> G[Domain Event]
-    G --> H[Event Bus]
-    H --> I[Async Handlers]
-    H --> J[Mercure / Real-time]
-
-    subgraph Persistence
-        F --> K[(PostgreSQL)]
-    end
-
-    subgraph Cache
-        D --> L[(Redis)]
-    end
-```
-
-**See [ADR 0002](docs/adr/0002-messenger-transport.md) for Message Bus implementation details.**
 
 ---
 
@@ -295,6 +192,34 @@ Stop wasting time on boilerplate. Use our generators to keep the architecture cl
 # Create a new Vertical Slice (Action + Handler + DTO + Test)
 make slice module=Billing feature=Subscribe
 ```
+
+---
+
+## 🔄 Deep Dive
+
+```mermaid
+flowchart TD
+    A[HTTP Request] --> B[Controller / EntryPoint]
+    B --> C[Command / Query]
+    C --> D[Handler]
+    D --> E[Entity / Domain]
+    D --> F[Repository]
+    E --> G[Domain Event]
+    G --> H[Event Bus]
+    H --> I[Async Handlers]
+    H --> J[Mercure / Real-time]
+
+    subgraph Persistence
+        F --> K[(PostgreSQL)]
+    end
+
+    subgraph Cache
+        D --> L[(Redis)]
+    end
+```
+
+**See [ADR 0002](docs/adr/0002-messenger-transport.md) for Message Bus implementation details.**
+
 ---
 
 ## 📚 Guides
@@ -303,6 +228,19 @@ make slice module=Billing feature=Subscribe
 - [Testing Guide](docs/guides/testing.md)
 - [Worker Mode Guide](docs/guides/worker-mode.md)
 - [AI Agent Setup](docs/guides/agent-setup.md)
+
+---
+
+## 🚀 Roadmap 2026
+
+| Quarter | Focus | What's Coming |
+|---------|-------|---------------|
+| **Q1** | Real-time & Connectivity | Mercure Hub, Event Sourcing Lite, TypeScript SDK Generator |
+| **Q2** | AI & Agentic Autonomy | Self-Healing CI, Interactive Scaffolding, Context Injection |
+| **Q3** | Edge & Performance | Static Binary Builds, Memory Management, SQLite + Litestream |
+| **Q4** | Frontend & Ecosystem | HTMX/LiveWire Presets, Public Templates Marketplace |
+
+[See full Roadmap →](docs/ROADMAP.md)
 
 ---
 
