@@ -67,19 +67,7 @@ The AI Agent will:
 
 ---
 
-## 🛣️ The Pragmatic Way
-
-How we write code:
-
-1. Create a Feature Slice
-2. Define a Command or Query
-3. Handle it
-
-**No over-engineering.**
-
----
-
-## 🌐 Zero Infrastructure Pain
+## 🐘 Zero Infrastructure Pain
 
 | Feature | Traditional | Pragmatic Franken |
 |---------|------------|-------------------|
@@ -133,17 +121,6 @@ We don't do "because I said so". Every decision is documented:
 
 ---
 
-## 🐘 Worker Mode Rules
-
-| Rule | Bad | Good |
-|------|-----|------|
-| No static cache | `static $cache = []` | `$this->cache->set()` |
-| Stateless entities | Entity with static state | Pure entities |
-| Clean shutdown | Implicit memory leaks | `register_shutdown_function()` |
-| Avoid singletons | `Singleton::getInstance()` | Dependency Injection |
-
----
-
 ## 📁 Architecture: Vertical Slices & Modular Monolith v2.0
 We don't do "folders by type" (all controllers in one place, all models in another). That's 2010. We group by Business Value.
 
@@ -184,6 +161,16 @@ src/
 2. **Zero Side Effects:** Delete a folder — the entire feature is gone. No ghost code left behind.
 3. **AI-Friendly:** Your AI Agent finds context instantly. It doesn't have to scan the whole src/Controllers folder to find one specific action.
 4. **Low Cognitive Load:** You focus on the feature, not the framework.
+
+### 🛣️ The Pragmatic Way
+
+How we write code:
+
+1. Create a Feature Slice
+2. Define a Command or Query
+3. Handle it
+
+**No over-engineering.**
 
 ### ⚡️ DX & Scaffolding
 Stop wasting time on boilerplate. Use our generators to keep the architecture clean and consistent:
