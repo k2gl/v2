@@ -7,7 +7,7 @@
         "php": ">=8.4",
         "ext-pdo_pgsql": "*",
         "doctrine/dbal": "^4.0",
-        "doctrine/doctrine-bundle": "^2.13",
+        "doctrine/doctrine-bundle": "^3.2",
         "doctrine/migrations": "^3.8",
         "doctrine/orm": "^3.3",
         "knpuniversity/oauth2-client-bundle": "*",
