@@ -2,15 +2,24 @@ services:
   app:
     build:
       context: .
+      dockerfile: ./docker/frankenphp/Dockerfile
       target: php_dev
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
     ports:
-      - "80:80"
-      - "443:443"
-      - "443:443/udp"
-      - "9003:9003"
+      - target: 80
+        published: ${HTTP_PORT:-80}
+        protocol: tcp
+      - target: 443
+        published: ${HTTPS_PORT:-443}
+        protocol: tcp
+      - target: 443
+        published: ${HTTP3_PORT:-443}
+        protocol: udp
+      - target: 9003
+        published: ${XDEBUG_PORT:-9003}
+        protocol: tcp
     volumes:
       - ./:/app:cached
       - caddy_data:/data

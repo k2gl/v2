@@ -71,4 +71,4 @@ jobs:
           DATABASE_URL: postgres://user:password@127.0.0.1:5432/app_db
           REDIS_URL: redis://127.0.0.1:6379
           MESSENGER_TRANSPORT_DSN: redis://127.0.0.1:6379/messages
-        run: vendor/bin/phpunit --fail-fast
+        run: vendor/bin/phpunit --stop-on-failure

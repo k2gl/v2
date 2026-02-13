@@ -1,14 +1,30 @@
 doctrine:
     dbal:
         url: '%env(DATABASE_URL)%'
+        driver: 'pdo_sqlite'
+        charset: 'utf8mb4'
+        server_version: '3.39'
     orm:
-        auto_generate_proxy_classes: true
+        auto_generate_proxy_classes: false
+        enable_native_lazy_objects: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
-        auto_mapping: true
+        auto_mapping: false
         mappings:
-            App:
+            User:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
-                alias: App
+                dir: '%kernel.project_dir%/src/User/Entity'
+                prefix: 'App\User\Entity'
+                alias: User
+            Board:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Board/Entity'
+                prefix: 'App\Board\Entity'
+                alias: Board
+            Task:
+                type: attribute
+                is_bundle: false
+                dir: '%kernel.project_dir%/src/Task/Entity'
+                prefix: 'App\Task\Entity'
+                alias: Task

@@ -5,30 +5,41 @@
     "license": "MIT",
     "require": {
         "php": ">=8.4",
-        "symfony/framework-bundle": "^7.2",
-        "symfony/runtime": "^7.2",
-        "symfony/messenger": "^7.2",
-        "symfony/doctrine-bridge": "^7.2",
-        "symfony/validator": "^8.0",
-        "symfony/http-kernel": "^7.2",
-        "symfony/routing": "^7.2",
-        "doctrine/orm": "^3.3",
+        "ext-pdo_pgsql": "*",
         "doctrine/dbal": "^4.0",
         "doctrine/doctrine-bundle": "^2.13",
         "doctrine/migrations": "^3.8",
+        "doctrine/orm": "^3.3",
+        "knpuniversity/oauth2-client-bundle": "*",
         "nelmio/api-doc-bundle": "^4.26",
         "nelmio/cors-bundle": "^2.5",
         "predis/predis": "^3.3",
-        "ext-pdo_pgsql": "*"
+        "symfony/asset": "^8.0",
+        "symfony/doctrine-bridge": "^7.2",
+        "symfony/form": "^8.0",
+        "symfony/framework-bundle": "^7.2",
+        "symfony/http-kernel": "^7.2",
+        "symfony/messenger": "^7.2",
+        "symfony/monolog-bridge": "^8.0",
+        "symfony/routing": "^7.2",
+        "symfony/runtime": "^7.2",
+        "symfony/security-bundle": "^8.0",
+        "symfony/twig-bundle": "^8.0",
+        "symfony/uid": "*",
+        "symfony/validator": "^8.0",
+        "symfony/var-exporter": "^8.0"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",
-        "k2gl/phpunit-fluent-assertions": "^12.4",
+        "doctrine/doctrine-migrations-bundle": "*",
+        "k2gl/phpunit-fluent-assertions": "*",
         "laravel/pint": "*",
         "php-cs-fixer/shim": "^3.65",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^11.0",
-        "symfony/maker-bundle": "^1.62",
+        "symfony/console": "*",
+        "symfony/maker-bundle": "*",
+        "symfony/orm-pack": "*",
         "symfony/phpunit-bridge": "^8.0",
         "zenstruck/browser": "^1.6",
         "zenstruck/foundry": "^2.0",
@@ -41,7 +52,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "App\\Tests\\": "tests/",
+            "App\\": "tests/"
         }
     },
     "scripts": {

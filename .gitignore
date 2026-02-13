@@ -1,12 +1,3 @@
-# Dependencies
-vendor/
-node_modules/
-
-# Build outputs
-build/
-coverage/
-.phpdox/
-
 # IDE
 .idea/
 !.idea/filetypes.txt
@@ -18,19 +9,19 @@ coverage/
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
-var/log/*
-!var/log/.gitkeep
-
-# Cache
-.cache/
-temp/
+# Dependencies
+vendor/
+node_modules/
 
 # Environment
 .env
 .env.local
 .env.*.local
+
+# Variables
+/var/*
+!var/.gitkeep
+
 
 # Testing
 .phpunit.result.cache
@@ -41,18 +32,6 @@ temp/
 # CS Fixer
 .php-cs-fixer.cache
 
-# Docker
-docker/dev/nginx/*.conf
-!docker/dev/nginx/default.conf
-
-# Database
-*.sqlite
-*.db
-
-# Misc
-*.bak
-*.orig
-*.rej
-
 # AI Agents
 .config/agents/*.local.md
+

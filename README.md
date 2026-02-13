@@ -237,5 +237,4 @@ See [Contributing Guidelines](.github/CONTRIBUTING.md) for details.
 
 ---
 
-** Build for 2026, not 2015. FrankenPHP is the engine, Symfony is the brain, AI is the hands. **
-> **Stop refactoring. Start delivering.**
+**Build for 2026, not 2015. FrankenPHP is the engine, Symfony is the brain, AI is the hands.**

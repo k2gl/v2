@@ -14,7 +14,7 @@ GROUP_ID := $(shell id -g)
 DC = UID=$(USER_ID) GID=$(GROUP_ID) docker compose
 
 # Docker container name
-DC_APP = frankenphp
+DC_APP = pfranken-app
 
 # Colors
 RED    := $(shell tput setaf 1)
@@ -39,14 +39,14 @@ help: ## Show this help message
 
 env-create:
 	@if [ ! -f .env.dist ]; then echo "$(RED)Error: .env.dist not found!$(RESET)"; exit 1; fi
-	cp -i .env.dist .env
+	cp -n .env.dist .env
 	@echo "" >> .env
-	@echo "# Auto-generated IDs" >> .env
-	@echo "UID=$(USER_ID)" >> .env
-	@echo "GID=$(GROUP_ID)" >> .env
+	@echo "# Replace auto-generated IDs"
+	sed -i "s|UID=.*|UID=${USER_ID}|g" .env
+	sed -i "s|GID=.*|GID=${GROUP_ID}|g" .env
 	@echo "$(GREEN).env created with UID:$(USER_ID) and GID:$(GROUP_ID)$(RESET)"
 
-setup: env-create up install db-migrate ## 🚀 Full setup: Container, Dependencies, Database
+install: env-create build up db-migrate ## 🚀 Full setup: Container, Dependencies, Database
 	@echo ""
 	@echo "🐘 $(BLUE)Pragmatic Franken is igniting...$(RESET)"
 	@echo ""
@@ -55,10 +55,6 @@ setup: env-create up install db-migrate ## 🚀 Full setup: Container, Dependenc
 	@echo "💾 Running migrations..."
 	@echo ""
 	@echo "🔥 $(GREEN)Done! Application live at https://localhost$(RESET)"
-
-install: setup ## 🚀 Full setup: Container, Dependencies, Database
-
-start: rebuild up
 
 ##—————— 🐳 Docker ——————
 build: ## Build Docker images
@@ -99,6 +95,8 @@ shell: ## Connect to FrankenPHP container shell
 		echo "$(GREEN)Container started.$(RESET)"; \
 	fi
 	$(DC) exec $(DC_APP) bash
+
+e: shell
 
 ##—————— Database ——————
 db-migrate: ## Run database migrations

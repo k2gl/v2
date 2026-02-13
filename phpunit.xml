@@ -12,23 +12,12 @@
         <testsuite name="Task">
             <directory>tests/Task</directory>
         </testsuite>
-        <testsuite name="Board">
-            <directory>tests/Board</directory>
-        </testsuite>
     </testsuites>
-    <source>
-        <include>
-            <directory suffix=".php">src</directory>
-        </include>
-    </source>
     <php>
         <env name="APP_ENV" value="test"/>
-        <env name="KERNEL_CLASS" value="App\Kernel"/>
-        <env name="DATABASE_URL" value="postgres://user:password@db:5432/app_db?serverVersion=16"/>
+        <env name="KERNEL_CLASS" value="App\FrankenKernel"/>
+        <env name="DATABASE_URL" value="sqlite:////home/l0gic/www/k2gl/pragmatic-franken/var/test.db"/>
         <env name="REDIS_URL" value="redis://redis:6379"/>
         <env name="MESSENGER_TRANSPORT_DSN" value="redis://redis:6379/messages"/>
     </php>
-    <extensions>
-        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension"/>
-    </extensions>
 </phpunit>
