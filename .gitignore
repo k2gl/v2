@@ -10,7 +10,6 @@
 Thumbs.db
 
 # Dependencies
-composer.lock
 vendor/
 node_modules/
 

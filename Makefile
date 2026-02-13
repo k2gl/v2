@@ -73,9 +73,15 @@ up: ## Start containers in detached mode
 	@echo "$(YELLOW)Starting containers...$(RESET)"
 	$(DC) up --detach
 
+run: ## Starting containers with logs
+	@echo "$(YELLOW)Starting containers with logs...$(RESET)"
+	$(DC) up
+
 down: ## Stop and remove containers
 	@echo "$(RED)Stopping containers...$(RESET)"
 	$(DC) down --remove-orphans
+
+d: down
 
 logs: ## Follow container logs
 	@echo "$(YELLOW)Showing and following logs...$(RESET)"

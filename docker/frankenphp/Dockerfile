@@ -50,7 +50,8 @@ COPY ./docker/php/xdebug.ini $PHP_INI_DIR/conf.d/docker-php-ext-xdebug.ini
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY composer.json composer.lock ./
+#COPY composer.json composer.lock ./
+COPY composer.json ./
 
 ENV COMPOSER_MEMORY_LIMIT=-1
 
